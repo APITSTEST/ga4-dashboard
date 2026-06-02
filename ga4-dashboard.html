@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GA4 Analytics Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --surface2: #f1f0ec;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+    --text: #1a1a18;
+    --text2: #5a5955;
+    --text3: #9a9890;
+    --accent: #1a6ef5;
+    --accent-light: #e8f0fe;
+    --green: #2d7a3a;
+    --green-light: #e8f5eb;
+    --red: #c0392b;
+    --red-light: #fdecea;
+    --amber: #b45309;
+    --amber-light: #fef3e2;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
+
+  /* AUTH */
+  #auth-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+  .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 3rem 2.5rem; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+  .auth-logo { width: 52px; height: 52px; background: var(--accent-light); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
+  .auth-logo svg { width: 26px; height: 26px; }
+  .auth-card h1 { font-size: 20px; font-weight: 600; margin-bottom: 0.5rem; }
+  .auth-card p { color: var(--text2); font-size: 13px; margin-bottom: 2rem; line-height: 1.7; }
+  .auth-btn { display: inline-flex; align-items: center; gap: 10px; padding: 11px 22px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; transition: all 0.15s; }
+  .auth-btn:hover { background: var(--surface2); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .auth-note { margin-top: 1.5rem; font-size: 12px; color: var(--text3); }
+
+  /* LAYOUT */
+  #dashboard { display: none; max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 12px; }
+  .topbar-left h1 { font-size: 20px; font-weight: 600; }
+  .topbar-left p { font-size: 12px; color: var(--text3); margin-top: 2px; }
+  .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  select, .btn { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 7px 12px; border: 1px solid var(--border-strong); border-radius: 7px; background: var(--surface); color: var(--text); cursor: pointer; transition: all 0.15s; }
+  select:hover, .btn:hover { background: var(--surface2); }
+  .btn { display: inline-flex; align-items: center; gap: 6px; }
+  .btn-danger { border-color: #fca5a5; color: var(--red); }
+  .btn-danger:hover { background: var(--red-light); }
+
+  /* ALERTS */
+  .alerts { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 8px; }
+  .alert { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: var(--radius); border-left: 3px solid; font-size: 13px; }
+  .alert-red { background: var(--red-light); border-color: var(--red); }
+  .alert-amber { background: var(--amber-light); border-color: var(--amber); }
+  .alert-green { background: var(--green-light); border-color: var(--green); }
+  .alert-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+  .alert-red .alert-icon { color: var(--red); }
+  .alert-amber .alert-icon { color: var(--amber); }
+  .alert-green .alert-icon { color: var(--green); }
+  .alert-title { font-weight: 600; margin-bottom: 2px; }
+  .alert-desc { color: var(--text2); font-size: 12px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tab { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* METRICS */
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; }
+  .metric-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
+  .metric-value { font-size: 26px; font-weight: 600; color: var(--text); line-height: 1; }
+  .metric-delta { font-size: 12px; margin-top: 4px; }
+  .up { color: var(--green); } .down { color: var(--red); }
+
+  /* CARDS */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+  .card-title { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 1rem; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  /* ROWS */
+  .data-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .data-row:last-child { border-bottom: none; }
+  .row-name { flex: 1; color: var(--text); }
+  .row-name.mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+  .row-val { font-weight: 600; min-width: 60px; text-align: right; }
+  .row-sub { font-size: 11px; color: var(--text3); min-width: 60px; text-align: right; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: #2d7a3a; } .dot-red { background: #c0392b; } .dot-amber { background: #d97706; }
+  .flag { font-size: 17px; width: 26px; text-align: center; }
+  .badge { font-size: 11px; padding: 2px 7px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+  .badge-red { background: var(--red-light); color: var(--red); }
+  .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+
+  /* PROGRESS */
+  .bar-bg { background: var(--surface2); border-radius: 4px; height: 5px; flex: 1; overflow: hidden; }
+  .bar-fill { height: 5px; border-radius: 4px; }
+
+  /* CHART WRAPPER */
+  .chart-wrap { position: relative; width: 100%; }
+
+  /* LOADING */
+  .loading { text-align: center; padding: 4rem 2rem; color: var(--text3); }
+  .spinner { display: inline-block; width: 28px; height: 28px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 1rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ERROR */
+  .error-box { background: var(--red-light); border: 1px solid #fca5a5; border-radius: var(--radius); padding: 1rem 1.25rem; color: var(--red); font-size: 13px; margin-bottom: 1rem; }
+
+  @media (max-width: 600px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    .topbar { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<!-- AUTH SCREEN -->
+<div id="auth-screen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1a6ef5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+    </div>
+    <h1>GA4 Analytics Dashboard</h1>
+    <p>Property 316098717 — sign in with the Google account that has access to this GA4 property. Read-only access only.</p>
+    <button class="auth-btn" onclick="startAuth()">
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Sign in with Google
+    </button>
+    <p class="auth-note">A Google sign-in popup will open. If blocked, allow popups for this file in your browser settings.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Analytics Dashboard</h1>
+      <p id="prop-label">Property 316098717 &mdash; <span id="period-label">Last 28 days</span></p>
+    </div>
+    <div class="topbar-right">
+      <select id="period-select" onchange="changePeriod(this.value)">
+        <option value="7">Last 7 days</option>
+        <option value="28" selected>Last 28 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+      <button class="btn" onclick="loadDashboard()">&#8635; Refresh</button>
+      <button class="btn btn-danger" onclick="signOut()">Sign out</button>
+    </div>
+  </div>
+
+  <div id="alerts-section" class="alerts"></div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="showTab('overview')" id="tab-overview">Overview</div>
+    <div class="tab" onclick="showTab('traffic')" id="tab-traffic">Traffic</div>
+    <div class="tab" onclick="showTab('events')" id="tab-events">Events</div>
+    <div class="tab" onclick="showTab('geo')" id="tab-geo">Geography</div>
+    <div class="tab" onclick="showTab('seo')" id="tab-seo">SEO</div>
+  </div>
+
+  <div id="error-section"></div>
+
+  <!-- OVERVIEW -->
+  <div id="pane-overview">
+    <div class="metric-grid" id="overview-metrics"></div>
+    <div class="card">
+      <div class="card-title">Sessions over time</div>
+      <div class="chart-wrap" style="height:220px"><canvas id="sessions-chart"></canvas></div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Channel breakdown</div>
+        <div id="channel-list"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Device type</div>
+        <div class="chart-wrap" style="height:180px"><canvas id="device-chart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRAFFIC -->
+  <div id="pane-traffic" style="display:none">
+    <div class="card">
+      <div class="card-title">UK vs international</div>
+      <div class="metric-grid" id="uk-metrics" style="margin-bottom:1rem"></div>
+      <div class="chart-wrap" style="height:220px"><canvas id="uk-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Traffic by source</div>
+      <div id="source-list"></div>
+    </div>
+  </div>
+
+  <!-- EVENTS -->
+  <div id="pane-events" style="display:none">
+    <div class="alert alert-amber" style="margin-bottom:1rem">
+      <span class="alert-icon">&#9888;</span>
+      <div>
+        <div class="alert-title">Event health monitoring</div>
+        <div class="alert-desc">generate_lead is your critical conversion event. A red dot means zero events — a silent failure. Compare current vs previous period to spot drops early.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">All events &mdash; current vs previous period</div>
+      <div id="events-list"></div>
+    </div>
+  </div>
+
+  <!-- GEO -->
+  <div id="pane-geo" style="display:none">
+    <div class="alert alert-amber" style="margin-bottom:1rem">
+      <span class="alert-icon">&#127758;</span>
+      <div>
+        <div class="alert-title">Bot &amp; spam traffic watch</div>
+        <div class="alert-desc">Countries outside your normal profile are flagged. High volumes from China, Singapore, Japan or similar unexpected sources are highlighted automatically.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Traffic by country</div>
+      <div id="country-list"></div>
+    </div>
+  </div>
+
+  <!-- SEO -->
+  <div id="pane-seo" style="display:none">
+    <div class="card">
+      <div class="card-title">Organic search performance</div>
+      <div class="metric-grid" id="seo-metrics"></div>
+      <div class="chart-wrap" style="height:220px;margin-top:1rem"><canvas id="organic-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Top organic landing pages</div>
+      <div id="landing-list"></div>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div id="loading-pane" style="display:none">
+    <div class="loading"><div class="spinner"></div><p>Loading your analytics data&hellip;</p></div>
+  </div>
+</div>
+
+<script>
+const CLIENT_ID = '528780354491-24amds434k7okpoog43di3odvgs0e6id.apps.googleusercontent.com';
+const PROPERTY_ID = '316098717';
+const REDIRECT_URI = window.location.href.split('?')[0].split('#')[0];
+const SCOPES = 'https://www.googleapis.com/auth/analytics.readonly';
+const KNOWN_COUNTRIES = ['United Kingdom','Ireland','United States','Germany','France','Netherlands','Spain','Italy','Australia','Canada','New Zealand','Belgium','Sweden','Denmark','Norway','Switzerland'];
+const FLAGS = {'United Kingdom':'🇬🇧','Ireland':'🇮🇪','United States':'🇺🇸','Germany':'🇩🇪','France':'🇫🇷','Netherlands':'🇳🇱','Spain':'🇪🇸','Italy':'🇮🇹','Australia':'🇦🇺','Canada':'🇨🇦','New Zealand':'🇳🇿','China':'🇨🇳','Singapore':'🇸🇬','Japan':'🇯🇵','India':'🇮🇳','Hong Kong':'🇭🇰','Russia':'🇷🇺','Brazil':'🇧🇷','Ukraine':'🇺🇦','Vietnam':'🇻🇳','Belgium':'🇧🇪','Sweden':'🇸🇪','Denmark':'🇩🇰','Norway':'🇳🇴','Switzerland':'🇨🇭','South Korea':'🇰🇷','Taiwan':'🇹🇼','Thailand':'🇹🇭','Indonesia':'🇮🇩','Pakistan':'🇵🇰','Bangladesh':'🇧🇩'};
+
+let accessToken = null;
+let currentPeriod = 28;
+let charts = {};
+
+// Handle OAuth redirect (token in URL hash)
+window.addEventListener('load', () => {
+  const hash = window.location.hash.substring(1);
+  const params = new URLSearchParams(hash);
+  if (params.get('access_token')) {
+    accessToken = params.get('access_token');
+    window.history.replaceState({}, document.title, window.location.pathname);
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadDashboard();
+  }
+});
+
+function startAuth() {
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: REDIRECT_URI,
+    response_type: 'token',
+    scope: SCOPES,
+    prompt: 'consent'
+  });
+  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
+}
+
+function signOut() {
+  accessToken = null;
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('auth-screen').style.display = 'block';
+}
+
+function changePeriod(v) {
+  currentPeriod = parseInt(v);
+  const labels = {'7':'Last 7 days','28':'Last 28 days','90':'Last 90 days'};
+  document.getElementById('period-label').textContent = labels[v];
+  loadDashboard();
+}
+
+function showTab(name) {
+  ['overview','traffic','events','geo','seo'].forEach(t => {
+    document.getElementById('pane-'+t).style.display = t === name ? 'block' : 'none';
+    const tab = document.getElementById('tab-'+t);
+    tab.className = 'tab' + (t === name ? ' active' : '');
+  });
+}
+
+async function gaRequest(body) {
+  const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${PROPERTY_ID}:runReport`, {
+    method: 'POST',
+    headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || 'API error ' + r.status); }
+  return r.json();
+}
+
+function dateRange(daysAgo, offset = 0) {
+  const end = new Date(); end.setDate(end.getDate() - offset);
+  const start = new Date(end); start.setDate(start.getDate() - daysAgo + 1);
+  const fmt = d => d.toISOString().slice(0, 10);
+  return { startDate: fmt(start), endDate: fmt(end) };
+}
+
+function parseRows(data) {
+  if (!data.rows) return [];
+  return data.rows.map(row => {
+    const obj = {};
+    (data.dimensionHeaders || []).forEach((h, i) => obj[h.name] = row.dimensionValues[i].value);
+    (data.metricHeaders || []).forEach((h, i) => obj[h.name] = parseFloat(row.metricValues[i].value) || 0);
+    return obj;
+  });
+}
+
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+
+function fmt(n) {
+  if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n / 1000).toFixed(1) + 'k';
+  return Math.round(n).toString();
+}
+
+function pct(a, b) { return b > 0 ? ((a / b - 1) * 100).toFixed(1) : '0'; }
+
+async function loadDashboard() {
+  document.getElementById('loading-pane').style.display = 'block';
+  document.getElementById('error-section').innerHTML = '';
+  document.getElementById('alerts-section').innerHTML = '';
+
+  try {
+    const dr = dateRange(currentPeriod);
+    const drPrev = dateRange(currentPeriod, currentPeriod);
+
+    const [overview, overviewPrev, daily, channels, devices, events, eventsPrev, countries, countriesPrev, organicSessions, organicDaily, landing] = await Promise.all([
+      gaRequest({ dateRanges: [dr], metrics: [{name:'sessions'},{name:'activeUsers'},{name:'bounceRate'},{name:'averageSessionDuration'}] }),
+      gaRequest({ dateRanges: [drPrev], metrics: [{name:'sessions'},{name:'activeUsers'},{name:'bounceRate'}] }),
+      gaRequest({ dateRanges: [dr], dimensions: [{name:'date'}], metrics: [{name:'sessions'}], orderBys: [{dimension:{dimensionName:'date'}}] }),
+      gaRequest({ dateRanges: [dr], dimensions: [{name:'sessionDefaultChannelGroup'}], metrics: [{name:'sessions'}], orderBys: [{metric:{metricName:'sessions'},desc:true}], limit: 10 }),
+      gaRequest({ dateRanges: [dr], dimensions: [{name:'deviceCategory'}], metrics: [{name:'sessions'}] }),
+      gaRequest({ dateRanges: [dr], dimensions: [{name:'eventName'}], metrics: [{name:'eventCount'}], orderBys: [{metric:{metricName:'eventCount'},desc:true}], limit: 25 }),
+      gaRequest({ dateRanges: [drPrev], dimensions: [{name:'eventName'}], metrics: [{name:'eventCount'}], limit: 25 }),
+      gaRequest({ dateRanges: [dr], dimensions: [{name:'country'}], metrics: [{name:'sessions'}], orderBys: [{metric:{metricName:'sessions'},desc:true}], limit: 25 }),
+      gaRequest({ dateRanges: [drPrev], dimensions: [{name:'country'}], metrics: [{name:'sessions'}], limit: 25 }),
+      gaRequest({ dateRanges: [dr], dimensions: [{name:'sessionDefaultChannelGroup'}], metrics: [{name:'sessions'}], dimensionFilter: {filter:{fieldName:'sessionDefaultChannelGroup',stringFilter:{value:'Organic Search',matchType:'EXACT'}}} }),
+      gaRequest({ dateRanges: [dr], dimensions: [{name:'date'},{name:'sessionDefaultChannelGroup'}], metrics: [{name:'sessions'}], orderBys: [{dimension:{dimensionName:'date'}}], dimensionFilter: {filter:{fieldName:'sessionDefaultChannelGroup',stringFilter:{value:'Organic Search',matchType:'EXACT'}}} }),
+      gaRequest({ dateRanges: [dr], dimensions: [{name:'landingPagePlusQueryString'}], metrics: [{name:'sessions'}], dimensionFilter: {filter:{fieldName:'sessionDefaultChannelGroup',stringFilter:{value:'Organic Search',matchType:'EXACT'}}}, orderBys: [{metric:{metricName:'sessions'},desc:true}], limit: 10 })
+    ]);
+
+    document.getElementById('loading-pane').style.display = 'none';
+
+    renderAlerts(events, eventsPrev, countries, countriesPrev);
+    renderOverview(overview, overviewPrev, daily, channels, devices);
+    renderTraffic(countries, channels);
+    renderEvents(events, eventsPrev);
+    renderGeo(countries, countriesPrev);
+    renderSEO(organicSessions, organicDaily, landing);
+
+  } catch (e) {
+    document.getElementById('loading-pane').style.display = 'none';
+    document.getElementById('error-section').innerHTML = `<div class="error-box"><strong>Error loading data:</strong> ${e.message}<br><small>Make sure your Google account has access to property ${PROPERTY_ID} and the Analytics Data API is enabled.</small></div>`;
+  }
+}
+
+function renderAlerts(events, eventsPrev, countries, countriesPrev) {
+  const evRows = parseRows(events);
+  const prevMap = {};
+  parseRows(eventsPrev).forEach(r => prevMap[r.eventName] = r.eventCount);
+
+  const alerts = [];
+  const gl = evRows.find(r => r.eventName === 'generate_lead');
+  const glPrev = prevMap['generate_lead'] || 0;
+
+  if (!gl || gl.eventCount === 0) {
+    alerts.push({type:'red', icon:'&#9888;', title:'generate_lead has dropped to ZERO', desc:`No lead events in the last ${currentPeriod} days. Previously recorded ${Math.round(glPrev)} events. Check your form and tracking implementation immediately.`});
+  } else if (glPrev > 0 && gl.eventCount < glPrev * 0.5) {
+    const drop = Math.round((1 - gl.eventCount / glPrev) * 100);
+    alerts.push({type:'amber', icon:'&#9660;', title:`generate_lead down ${drop}% vs previous period`, desc:`Was ${Math.round(glPrev)} events, now ${Math.round(gl.eventCount)}. Significant drop worth investigating.`});
+  } else if (gl) {
+    const change = pct(gl.eventCount, glPrev);
+    alerts.push({type:'green', icon:'&#10003;', title:`generate_lead firing normally — ${Math.round(gl.eventCount)} events`, desc:`${change >= 0 ? '+' : ''}${change}% vs previous period. Looking healthy.`});
+  }
+
+  const cRows = parseRows(countries);
+  const suspicious = cRows.filter(r => !KNOWN_COUNTRIES.includes(r.country) && r.sessions > 30);
+  if (suspicious.length > 0) {
+    alerts.push({type:'amber', icon:'&#128272;', title:`Unusual traffic from ${suspicious.length} unexpected ${suspicious.length === 1 ? 'country' : 'countries'}`, desc: suspicious.slice(0, 5).map(r => `${r.country} (${Math.round(r.sessions)} sessions)`).join(', ') + ' — check Geography tab for details.'});
+  }
+
+  document.getElementById('alerts-section').innerHTML = alerts.map(a =>
+    `<div class="alert alert-${a.type}"><span class="alert-icon">${a.icon}</span><div><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div></div>`
+  ).join('');
+}
+
+function renderOverview(overview, prev, daily, channels, devices) {
+  const m = overview.rows?.[0]?.metricValues || [];
+  const mp = prev.rows?.[0]?.metricValues || [];
+  const sessions = parseFloat(m[0]?.value || 0);
+  const users = parseFloat(m[1]?.value || 0);
+  const bounce = parseFloat(m[2]?.value || 0) * 100;
+  const dur = parseFloat(m[3]?.value || 0);
+  const pSess = parseFloat(mp[0]?.value || 1);
+  const pUsers = parseFloat(mp[1]?.value || 1);
+
+  document.getElementById('overview-metrics').innerHTML = [
+    { label: 'Sessions', val: fmt(sessions), delta: `${sessions >= pSess ? '+' : ''}${pct(sessions, pSess)}% vs prev`, up: sessions >= pSess },
+    { label: 'Users', val: fmt(users), delta: `${users >= pUsers ? '+' : ''}${pct(users, pUsers)}% vs prev`, up: users >= pUsers },
+    { label: 'Bounce rate', val: bounce.toFixed(1) + '%', delta: '', up: null },
+    { label: 'Avg session', val: Math.floor(dur / 60) + 'm ' + Math.round(dur % 60) + 's', delta: '', up: null }
+  ].map(m => `<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div>${m.delta ? `<div class="metric-delta ${m.up ? 'up' : 'down'}">${m.delta}</div>` : ''}</div>`).join('');
+
+  const dailyRows = parseRows(daily);
+  const labels = dailyRows.map(r => r.date.slice(4, 6) + '/' + r.date.slice(6));
+  const data = dailyRows.map(r => r.sessions);
+  destroyChart('sessions-chart');
+  charts['sessions-chart'] = new Chart(document.getElementById('sessions-chart'), {
+    type: 'line',
+    data: { labels, datasets: [{ label: 'Sessions', data, borderColor: '#1a6ef5', backgroundColor: 'rgba(26,110,245,0.07)', fill: true, tension: 0.35, pointRadius: 2, pointHoverRadius: 4 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14, font: { size: 11 } } }, y: { ticks: { font: { size: 11 } } } } }
+  });
+
+  const chRows = parseRows(channels);
+  const total = chRows.reduce((s, r) => s + r.sessions, 0);
+  document.getElementById('channel-list').innerHTML = chRows.slice(0, 7).map(r => {
+    const p = total > 0 ? Math.round(r.sessions / total * 100) : 0;
+    return `<div class="data-row"><span class="row-name">${r.sessionDefaultChannelGroup}</span><div class="bar-bg"><div class="bar-fill" style="width:${p}%;background:#1a6ef5;opacity:0.7;"></div></div><span class="row-val" style="min-width:36px;">${p}%</span></div>`;
+  }).join('');
+
+  const devRows = parseRows(devices);
+  const devColors = { mobile: '#1a6ef5', desktop: '#2d7a3a', tablet: '#d97706' };
+  destroyChart('device-chart');
+  charts['device-chart'] = new Chart(document.getElementById('device-chart'), {
+    type: 'doughnut',
+    data: { labels: devRows.map(r => r.deviceCategory), datasets: [{ data: devRows.map(r => Math.round(r.sessions)), backgroundColor: devRows.map(r => devColors[r.deviceCategory] || '#999'), borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right', labels: { font: { size: 12 }, boxWidth: 12, padding: 10 } } } }
+  });
+}
+
+function renderTraffic(countries, channels) {
+  const cRows = parseRows(countries);
+  const total = cRows.reduce((s, r) => s + r.sessions, 0);
+  const uk = cRows.filter(r => r.country === 'United Kingdom').reduce((s, r) => s + r.sessions, 0);
+  const intl = total - uk;
+  const ukPct = total > 0 ? Math.round(uk / total * 100) : 0;
+
+  document.getElementById('uk-metrics').innerHTML = [
+    { label: 'UK sessions', val: fmt(uk) },
+    { label: 'International', val: fmt(intl) },
+    { label: 'UK share', val: ukPct + '%' },
+    { label: 'Countries', val: cRows.length }
+  ].map(m => `<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div></div>`).join('');
+
+  destroyChart('uk-chart');
+  charts['uk-chart'] = new Chart(document.getElementById('uk-chart'), {
+    type: 'doughnut',
+    data: { labels: ['United Kingdom', 'International'], datasets: [{ data: [Math.round(uk), Math.round(intl)], backgroundColor: ['#1a6ef5', '#c0392b'], borderWidth: 2, borderColor: '#fff' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: 'right', labels: { font: { size: 13 }, boxWidth: 14 } } } }
+  });
+
+  const chRows = parseRows(channels);
+  const chTotal = chRows.reduce((s, r) => s + r.sessions, 0);
+  document.getElementById('source-list').innerHTML = chRows.map(r => {
+    const p = chTotal > 0 ? Math.round(r.sessions / chTotal * 100) : 0;
+    return `<div class="data-row"><span class="row-name">${r.sessionDefaultChannelGroup}</span><span class="row-sub">${fmt(r.sessions)}</span><div class="bar-bg" style="max-width:100px;"><div class="bar-fill" style="width:${p * 2}%;max-width:100%;background:#1a6ef5;opacity:0.7;"></div></div><span class="row-val" style="min-width:32px;">${p}%</span></div>`;
+  }).join('');
+}
+
+function renderEvents(events, eventsPrev) {
+  const evRows = parseRows(events);
+  const prevMap = {};
+  parseRows(eventsPrev).forEach(r => prevMap[r.eventName] = r.eventCount);
+
+  document.getElementById('events-list').innerHTML = evRows.map(r => {
+    const prev = prevMap[r.eventName] || 0;
+    const isZero = r.eventCount === 0;
+    const isDown = prev > 0 && r.eventCount < prev * 0.6;
+    const dotClass = isZero ? 'dot-red' : isDown ? 'dot-amber' : 'dot-green';
+    const delta = prev > 0 ? ((r.eventCount / prev - 1) * 100).toFixed(0) + '%' : 'new';
+    const deltaClass = r.eventCount >= prev ? 'up' : 'down';
+    const star = r.eventName === 'generate_lead' ? ' ★' : '';
+    return `<div class="data-row">
+      <div class="dot ${dotClass}"></div>
+      <span class="row-name mono">${r.eventName}${star}</span>
+      <span class="row-val">${fmt(r.eventCount)}</span>
+      <span class="row-sub ${delta !== 'new' ? deltaClass : ''}" style="min-width:50px;">${delta !== 'new' ? (r.eventCount >= prev ? '+' : '') + delta : delta}</span>
+      <span class="row-sub">prev: ${fmt(prev)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderGeo(countries, countriesPrev) {
+  const cRows = parseRows(countries);
+  const prevMap = {};
+  parseRows(countriesPrev).forEach(r => prevMap[r.country] = r.sessions);
+  const total = cRows.reduce((s, r) => s + r.sessions, 0);
+  const maxSessions = cRows[0]?.sessions || 1;
+
+  document.getElementById('country-list').innerHTML = cRows.map(r => {
+    const isKnown = KNOWN_COUNTRIES.includes(r.country);
+    const isNew = !prevMap[r.country];
+    const isSuspect = !isKnown && r.sessions > 30;
+    const barW = Math.round(r.sessions / maxSessions * 100);
+    const barColor = isSuspect ? '#c0392b' : '#1a6ef5';
+    const badge = isSuspect ? `<span class="badge badge-red">&#9888; check</span>` : isNew ? `<span class="badge badge-amber">new</span>` : '';
+    return `<div class="data-row">
+      <span class="flag">${FLAGS[r.country] || '🌍'}</span>
+      <span class="row-name">${r.country}</span>
+      ${badge}
+      <div class="bar-bg" style="max-width:100px;"><div class="bar-fill" style="width:${barW}%;background:${barColor};opacity:0.7;"></div></div>
+      <span class="row-val">${fmt(r.sessions)}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderSEO(organic, organicDaily, landing) {
+  const orgSessions = parseFloat(organic.rows?.[0]?.metricValues?.[0]?.value || 0);
+  document.getElementById('seo-metrics').innerHTML = [
+    { label: 'Organic sessions', val: fmt(orgSessions) }
+  ].map(m => `<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div></div>`).join('');
+
+  const orgRows = parseRows(organicDaily);
+  destroyChart('organic-chart');
+  charts['organic-chart'] = new Chart(document.getElementById('organic-chart'), {
+    type: 'line',
+    data: { labels: orgRows.map(r => r.date.slice(4, 6) + '/' + r.date.slice(6)), datasets: [{ label: 'Organic sessions', data: orgRows.map(r => r.sessions), borderColor: '#2d7a3a', backgroundColor: 'rgba(45,122,58,0.07)', fill: true, tension: 0.35, pointRadius: 2 }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { ticks: { maxRotation: 45, autoSkip: true, maxTicksLimit: 14, font: { size: 11 } } }, y: { ticks: { font: { size: 11 } } } } }
+  });
+
+  const lRows = parseRows(landing);
+  document.getElementById('landing-list').innerHTML = lRows.map(r => {
+    const page = r.landingPagePlusQueryString.length > 60 ? r.landingPagePlusQueryString.slice(0, 60) + '…' : r.landingPagePlusQueryString;
+    return `<div class="data-row"><span class="row-name mono" style="font-size:11px;">${page}</span><span class="row-val">${fmt(r.sessions)}</span></div>`;
+  }).join('');
+}
+</script>
+</body>
+</html>
