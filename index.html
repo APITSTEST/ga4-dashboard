@@ -6,7 +6,6 @@
 <title>A Place in the Sun — Analytics Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   :root {
@@ -18,7 +17,6 @@
     --red: #c0392b; --red-light: #fdecea;
     --amber: #b45309; --amber-light: #fef3e2;
     --purple: #6d28d9; --purple-light: #ede9fe;
-    --teal: #0891b2; --teal-light: #e0f7fa;
     --radius: 10px; --radius-lg: 14px;
   }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
@@ -28,11 +26,12 @@
   .auth-logo { width: 56px; height: 56px; background: var(--accent-light); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; }
   .auth-logo svg { width: 28px; height: 28px; }
   .auth-card h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.5rem; }
-  .auth-card .subtitle { color: var(--text2); font-size: 13px; margin-bottom: 0.75rem; }
-  .auth-features { display: flex; justify-content: center; gap: 1.2rem; margin: 1.25rem 0 1.75rem; flex-wrap: wrap; }
+  .auth-card .subtitle { color: var(--text2); font-size: 13px; margin-bottom: 1.5rem; }
+  .auth-features { display: flex; justify-content: center; gap: 1.2rem; margin: 0 0 2rem; flex-wrap: wrap; }
   .auth-feature { font-size: 12px; color: var(--text3); }
-  #g_id_signin { display: flex; justify-content: center; margin-top: 0.5rem; }
-  .auth-note { margin-top: 1.25rem; font-size: 12px; color: var(--text3); line-height: 1.6; }
+  .sign-in-btn { display: inline-flex; align-items: center; gap: 12px; padding: 13px 28px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .sign-in-btn:hover { background: var(--surface2); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+  .auth-note { margin-top: 1.5rem; font-size: 12px; color: var(--text3); line-height: 1.7; }
 
   #dashboard { display: none; max-width: 1160px; margin: 0 auto; padding: 2rem 1.5rem; }
   .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 12px; }
@@ -50,10 +49,8 @@
   .alert-red { background: var(--red-light); border-color: var(--red); }
   .alert-amber { background: var(--amber-light); border-color: var(--amber); }
   .alert-green { background: var(--green-light); border-color: var(--green); }
-  .alert-blue { background: var(--accent-light); border-color: var(--accent); }
   .alert-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
-  .alert-red .alert-icon { color: var(--red); } .alert-amber .alert-icon { color: var(--amber); }
-  .alert-green .alert-icon { color: var(--green); } .alert-blue .alert-icon { color: var(--accent); }
+  .alert-red .alert-icon { color: var(--red); } .alert-amber .alert-icon { color: var(--amber); } .alert-green .alert-icon { color: var(--green); }
   .alert-title { font-weight: 600; margin-bottom: 2px; }
   .alert-desc { color: var(--text2); font-size: 12px; }
 
@@ -89,7 +86,6 @@
   .badge { font-size: 11px; padding: 2px 7px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
   .badge-red { background: var(--red-light); color: var(--red); }
   .badge-amber { background: var(--amber-light); color: var(--amber); }
-  .badge-green { background: var(--green-light); color: var(--green); }
 
   .platform-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
   .platform-android { background: #e8f5e9; color: #2e7d32; }
@@ -134,7 +130,6 @@
 </head>
 <body>
 
-<!-- Auth screen -->
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">
@@ -145,17 +140,24 @@
     <h1>A Place in the Sun</h1>
     <p class="subtitle">Analytics, SEO &amp; App Dashboard</p>
     <div class="auth-features">
-      <span>📊 GA4 Web</span> &nbsp;
-      <span>📱 App Analytics</span> &nbsp;
-      <span>🔍 Search Console</span> &nbsp;
+      <span>📊 GA4 Web</span>
+      <span>📱 App Analytics</span>
+      <span>🔍 Search Console</span>
       <span>📈 Trends</span>
     </div>
-    <div id="g_id_signin"></div>
-    <p class="auth-note">Signs in with Google to access your analytics data.<br>Read-only. Your data never leaves your browser.</p>
+    <button class="sign-in-btn" onclick="startAuth()">
+      <svg width="20" height="20" viewBox="0 0 24 24">
+        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+      </svg>
+      Sign in with Google
+    </button>
+    <p class="auth-note">Signs in with Google to access your analytics data.<br>Read-only access. Your data never leaves your browser.</p>
   </div>
 </div>
 
-<!-- Dashboard -->
 <div id="dashboard">
   <div class="topbar">
     <div class="topbar-left">
@@ -186,7 +188,6 @@
     <div class="tab" onclick="showTab('geo')" id="tab-geo">Geography</div>
   </div>
 
-  <!-- OVERVIEW -->
   <div id="pane-overview">
     <div class="metric-grid" id="overview-metrics"></div>
     <div class="grid-2">
@@ -200,19 +201,12 @@
     </div>
   </div>
 
-  <!-- APP -->
   <div id="pane-app" style="display:none">
-    <div class="warn-box">⚠️ <strong>iOS data note:</strong> The APITS-IOS stream hasn't received data recently. App stats currently reflect Android only. Ask your developer to check the iOS Firebase connection.</div>
+    <div class="warn-box">⚠️ <strong>iOS data note:</strong> The APITS-IOS stream has not received data recently. App stats currently reflect Android only. Ask your developer to check the iOS Firebase connection.</div>
     <div class="metric-grid" id="app-metrics"></div>
     <div class="compare-panel">
-      <div class="compare-side">
-        <div class="compare-side-title"><span style="font-size:20px">🌐</span> Website <span class="platform-badge platform-web">GA4 Web</span></div>
-        <div id="web-compare-metrics"></div>
-      </div>
-      <div class="compare-side">
-        <div class="compare-side-title"><span style="font-size:20px">📱</span> Mobile App <span class="platform-badge platform-android">Android</span></div>
-        <div id="app-compare-metrics"></div>
-      </div>
+      <div class="compare-side"><div class="compare-side-title"><span style="font-size:20px">🌐</span> Website <span class="platform-badge platform-web">GA4 Web</span></div><div id="web-compare-metrics"></div></div>
+      <div class="compare-side"><div class="compare-side-title"><span style="font-size:20px">📱</span> Mobile App <span class="platform-badge platform-android">Android</span></div><div id="app-compare-metrics"></div></div>
     </div>
     <div class="grid-2">
       <div class="card"><div class="card-title">App sessions over time</div><div class="chart-wrap" style="height:200px"><canvas id="app-sessions-chart"></canvas></div></div>
@@ -226,13 +220,11 @@
     <div class="card"><div class="card-title">App — geography</div><div id="app-geo-list"></div></div>
   </div>
 
-  <!-- TRAFFIC -->
   <div id="pane-traffic" style="display:none">
     <div class="card"><div class="card-title">UK vs international</div><div class="metric-grid" id="uk-metrics" style="margin-bottom:1rem"></div><div class="chart-wrap" style="height:200px"><canvas id="uk-chart"></canvas></div></div>
     <div class="card"><div class="card-title">Traffic by source</div><div id="source-list"></div></div>
   </div>
 
-  <!-- SEO -->
   <div id="pane-seo" style="display:none">
     <div class="metric-grid" id="seo-metrics"></div>
     <div class="card"><div class="card-title">Clicks &amp; impressions over time</div><div class="chart-wrap" style="height:220px"><canvas id="gsc-trend-chart"></canvas></div></div>
@@ -243,14 +235,10 @@
     <div class="card"><div class="card-title">Position changes to watch</div><div id="gsc-positions-list"></div></div>
   </div>
 
-  <!-- TRENDS -->
   <div id="pane-trends" style="display:none">
     <div class="info-box" id="trends-status"></div>
     <div class="card">
-      <div class="card-header">
-        <div class="card-title">Destination search interest over time</div>
-        <div class="country-filter" id="trends-country-filter"></div>
-      </div>
+      <div class="card-header"><div class="card-title">Destination search interest over time</div><div class="country-filter" id="trends-country-filter"></div></div>
       <div class="trends-legend" id="trends-legend"></div>
       <div class="chart-wrap" style="height:280px"><canvas id="trends-chart"></canvas></div>
       <p class="trends-note">Google Trends shows relative search interest (0–100). 100 = peak popularity for that term in the selected period.</p>
@@ -259,21 +247,13 @@
     <div class="card"><div class="card-title">Current interest by destination</div><div id="trends-summary"></div></div>
   </div>
 
-  <!-- EVENTS -->
   <div id="pane-events" style="display:none">
-    <div class="alert alert-amber" style="margin-bottom:1rem">
-      <span class="alert-icon">⚠</span>
-      <div><div class="alert-title">Event health monitoring</div><div class="alert-desc">generate_lead is your critical conversion event. Red dot = zero events. Compare current vs previous period to catch silent failures.</div></div>
-    </div>
+    <div class="alert alert-amber" style="margin-bottom:1rem"><span class="alert-icon">⚠</span><div><div class="alert-title">Event health monitoring</div><div class="alert-desc">generate_lead is your critical conversion event. Red dot = zero events. Compare current vs previous period to catch silent failures.</div></div></div>
     <div class="card"><div class="card-title">Website events — current vs previous period</div><div id="events-list"></div></div>
   </div>
 
-  <!-- GEO -->
   <div id="pane-geo" style="display:none">
-    <div class="alert alert-amber" style="margin-bottom:1rem">
-      <span class="alert-icon">🔒</span>
-      <div><div class="alert-title">Bot &amp; spam traffic watch</div><div class="alert-desc">Countries outside your normal profile are flagged. High volumes from unexpected sources highlighted in red.</div></div>
-    </div>
+    <div class="alert alert-amber" style="margin-bottom:1rem"><span class="alert-icon">🔒</span><div><div class="alert-title">Bot &amp; spam traffic watch</div><div class="alert-desc">Countries outside your normal profile are flagged. High volumes from unexpected sources highlighted in red.</div></div></div>
     <div class="card"><div class="card-title">Website traffic by country</div><div id="country-list"></div></div>
   </div>
 
@@ -281,13 +261,15 @@
 </div>
 
 <script>
+// ---- CONFIG ----
 const CLIENT_ID = '528780354491-24amds434k7okpoog43di3odvgs0e6id.apps.googleusercontent.com';
 const WEB_PROPERTY_ID = '316098717';
 const APP_PROPERTY_ID = '520241296';
 const GSC_SITE = 'https://www.aplaceinthesun.com/';
+const SCOPES = 'https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/webmasters.readonly';
+
 const KNOWN_COUNTRIES = ['United Kingdom','Ireland','United States','Germany','France','Netherlands','Spain','Italy','Australia','Canada','New Zealand','Belgium','Sweden','Denmark','Norway','Switzerland'];
-const FLAGS = {'United Kingdom':'🇬🇧','Ireland':'🇮🇪','United States':'🇺🇸','Germany':'🇩🇪','France':'🇫🇷','Netherlands':'🇳🇱','Spain':'🇪🇸','Italy':'🇮🇹','Australia':'🇦🇺','Canada':'🇨🇦','New Zealand':'🇳🇿','China':'🇨🇳','Singapore':'🇸🇬','Japan':'🇯🇵','India':'🇮🇳','Hong Kong':'🇭🇰','Russia':'🇷🇺','Brazil':'🇧🇷','Ukraine':'🇺🇦','Belgium':'🇧🇪','Sweden':'🇸🇪','Denmark':'🇩🇰','Norway':'🇳🇴','Switzerland':'🇨🇭','South Korea':'🇰🇷','Taiwan':'🇹🇼','Thailand':'🇹🇭'};
-const TREND_TERMS = ['property for sale in Spain','property for sale in France','property for sale in Italy','property for sale in Portugal','property for sale in Cyprus','property for sale in Greece','property for sale in Florida'];
+const FLAGS = {'United Kingdom':'🇬🇧','Ireland':'🇮🇪','United States':'🇺🇸','Germany':'🇩🇪','France':'🇫🇷','Netherlands':'🇳🇱','Spain':'🇪🇸','Italy':'🇮🇹','Australia':'🇦🇺','Canada':'🇨🇦','New Zealand':'🇳🇿','China':'🇨🇳','Singapore':'🇸🇬','Japan':'🇯🇵','India':'🇮🇳','Hong Kong':'🇭🇰','Russia':'🇷🇺','Brazil':'🇧🇷','Ukraine':'🇺🇦','Belgium':'🇧🇪','Sweden':'🇸🇪','Denmark':'🇩🇰','Norway':'🇳🇴','Switzerland':'🇨🇭','South Korea':'🇰🇷'};
 const TREND_COLORS = ['#1a6ef5','#2d7a3a','#c0392b','#d97706','#6d28d9','#0891b2','#be185d'];
 const TREND_COUNTRIES = [{code:'GB',label:'🇬🇧 UK'},{code:'NL',label:'🇳🇱 Netherlands'},{code:'DE',label:'🇩🇪 Germany'},{code:'US',label:'🇺🇸 USA'},{code:'IE',label:'🇮🇪 Ireland'}];
 
@@ -295,64 +277,47 @@ let accessToken = null;
 let currentPeriod = 28;
 let charts = {};
 let trendsCountry = 'GB';
-let activeTerms = new Set(TREND_TERMS.map((_,i)=>i));
-let tokenClient = null;
+let activeTerms = new Set([0,1,2,3,4,5,6]);
 
-// Initialise Google Identity Services
-window.onload = function() {
-  // Wait for GIS script to load
-  const initGIS = () => {
-    if (typeof google === 'undefined') { setTimeout(initGIS, 100); return; }
-    google.accounts.id.initialize({
-      client_id: CLIENT_ID,
-      callback: () => {} // not used for token flow
-    });
-
-    tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID,
-      scope: 'https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/webmasters.readonly',
-      callback: (tokenResponse) => {
-        if (tokenResponse.error) {
-          showError('Authentication failed: ' + tokenResponse.error);
-          return;
-        }
-        accessToken = tokenResponse.access_token;
-        document.getElementById('auth-screen').style.display = 'none';
-        document.getElementById('dashboard').style.display = 'block';
-        buildTrendsCountryFilter();
-        loadAll();
-      }
-    });
-
-    // Render the sign-in button
-    google.accounts.id.renderButton(
-      document.getElementById('g_id_signin'),
-      { theme: 'outline', size: 'large', text: 'signin_with', shape: 'rectangular', width: 280 }
-    );
-  };
-  initGIS();
-};
-
+// ---- AUTH ----
+// Uses PKCE flow which works on GitHub Pages without redirect URI issues
 function startAuth() {
-  if (tokenClient) tokenClient.requestAccessToken();
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    redirect_uri: window.location.origin + window.location.pathname,
+    response_type: 'token',
+    scope: SCOPES,
+    include_granted_scopes: 'true',
+    prompt: 'select_account'
+  });
+  window.location.href = 'https://accounts.google.com/o/oauth2/v2/auth?' + params.toString();
 }
 
-// Make the sign-in button trigger token flow
-document.addEventListener('click', function(e) {
-  if (e.target.closest('#g_id_signin')) {
-    setTimeout(() => { if (tokenClient) tokenClient.requestAccessToken(); }, 100);
-  }
-});
-
 function signOut() {
-  if (accessToken) {
-    google.accounts.oauth2.revoke(accessToken, () => {});
-  }
   accessToken = null;
+  window.location.hash = '';
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'block';
 }
 
+// Check for token in URL on page load
+(function checkAuth() {
+  const hash = window.location.hash.substring(1);
+  if (!hash) return;
+  const params = new URLSearchParams(hash);
+  const token = params.get('access_token');
+  if (token) {
+    accessToken = token;
+    // Clean URL without losing the page
+    history.replaceState(null, '', window.location.pathname);
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    buildTrendsCountryFilter();
+    loadAll();
+  }
+})();
+
+// ---- HELPERS ----
 function changePeriod(v) {
   currentPeriod = parseInt(v);
   const l = {'7':'Last 7 days','28':'Last 28 days','90':'Last 90 days'};
@@ -362,224 +327,223 @@ function changePeriod(v) {
 
 function showTab(name) {
   ['overview','app','traffic','seo','trends','events','geo'].forEach(t => {
-    document.getElementById('pane-'+t).style.display = t===name?'block':'none';
-    document.getElementById('tab-'+t).className = 'tab'+(t===name?' active':'');
+    document.getElementById('pane-'+t).style.display = t===name ? 'block' : 'none';
+    document.getElementById('tab-'+t).className = 'tab' + (t===name ? ' active' : '');
   });
-  if (name==='trends') loadTrends();
+  if (name === 'trends') loadTrends();
 }
 
-function showError(msg) {
-  document.getElementById('error-section').innerHTML = `<div class="error-box"><strong>Error:</strong> ${msg}</div>`;
-}
-
-async function gaRequest(propertyId, body) {
-  const r = await fetch(`https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`, {
-    method:'POST', headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'}, body:JSON.stringify(body)
-  });
-  if (!r.ok) { const e=await r.json(); throw new Error('GA4 ('+propertyId+'): '+(e.error?.message||r.status)); }
+async function apiFetch(url, body) {
+  const opts = { headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' } };
+  if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
+  const r = await fetch(url, opts);
+  if (!r.ok) { const e = await r.json(); throw new Error(e.error?.message || r.status); }
   return r.json();
+}
+
+async function gaRequest(pid, body) {
+  return apiFetch(`https://analyticsdata.googleapis.com/v1beta/properties/${pid}:runReport`, body);
 }
 
 async function gscRequest(body) {
-  const r = await fetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(GSC_SITE)}/searchAnalytics/query`, {
-    method:'POST', headers:{'Authorization':'Bearer '+accessToken,'Content-Type':'application/json'}, body:JSON.stringify(body)
-  });
-  if (!r.ok) { const e=await r.json(); throw new Error('GSC: '+(e.error?.message||r.status)); }
-  return r.json();
+  return apiFetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(GSC_SITE)}/searchAnalytics/query`, body);
 }
 
-function gaDateRange(daysAgo, offset=0) {
-  const end=new Date(); end.setDate(end.getDate()-offset);
-  const start=new Date(end); start.setDate(start.getDate()-daysAgo+1);
-  const fmt=d=>d.toISOString().slice(0,10);
-  return {startDate:fmt(start),endDate:fmt(end)};
+function dr(days, offset=0) {
+  const e = new Date(); e.setDate(e.getDate()-offset);
+  const s = new Date(e); s.setDate(s.getDate()-days+1);
+  const f = d => d.toISOString().slice(0,10);
+  return {startDate:f(s), endDate:f(e)};
 }
 
-function gscDateRange(daysAgo, offset=0) {
-  const end=new Date(); end.setDate(end.getDate()-offset-3);
-  const start=new Date(end); start.setDate(start.getDate()-daysAgo+1);
-  const fmt=d=>d.toISOString().slice(0,10);
-  return {startDate:fmt(start),endDate:fmt(end)};
+function gdr(days, offset=0) {
+  const e = new Date(); e.setDate(e.getDate()-offset-3);
+  const s = new Date(e); s.setDate(s.getDate()-days+1);
+  const f = d => d.toISOString().slice(0,10);
+  return {startDate:f(s), endDate:f(e)};
 }
 
 function parseRows(data) {
   if (!data.rows) return [];
-  return data.rows.map(row=>{
-    const obj={};
-    (data.dimensionHeaders||[]).forEach((h,i)=>obj[h.name]=row.dimensionValues[i].value);
-    (data.metricHeaders||[]).forEach((h,i)=>obj[h.name]=parseFloat(row.metricValues[i].value)||0);
+  return data.rows.map(row => {
+    const obj = {};
+    (data.dimensionHeaders||[]).forEach((h,i) => obj[h.name] = row.dimensionValues[i].value);
+    (data.metricHeaders||[]).forEach((h,i) => obj[h.name] = parseFloat(row.metricValues[i].value)||0);
     return obj;
   });
 }
 
-function destroyChart(id) { if(charts[id]){charts[id].destroy();delete charts[id];} }
-function fmt(n) { if(n>=1000000)return(n/1000000).toFixed(1)+'M'; if(n>=1000)return(n/1000).toFixed(1)+'k'; return Math.round(n).toString(); }
+function dc(id) { if(charts[id]){charts[id].destroy();delete charts[id];} }
+function fmt(n) { if(n>=1e6)return(n/1e6).toFixed(1)+'M'; if(n>=1000)return(n/1000).toFixed(1)+'k'; return Math.round(n)+''; }
 function pct(a,b) { return b>0?((a/b-1)*100).toFixed(1):'0'; }
-function posBadge(pos) { const p=Math.round(pos); const c=p<=3?'pos-1-3':p<=10?'pos-4-10':p<=20?'pos-11-20':'pos-20plus'; return `<span class="position-badge ${c}">#${p}</span>`; }
+function posBadge(p) { p=Math.round(p); const c=p<=3?'pos-1-3':p<=10?'pos-4-10':p<=20?'pos-11-20':'pos-20plus'; return `<span class="position-badge ${c}">#${p}</span>`; }
 
+// ---- LOAD ALL ----
 async function loadAll() {
-  document.getElementById('loading-pane').style.display='block';
-  document.getElementById('error-section').innerHTML='';
-  document.getElementById('alerts-section').innerHTML='';
+  document.getElementById('loading-pane').style.display = 'block';
+  document.getElementById('error-section').innerHTML = '';
+  document.getElementById('alerts-section').innerHTML = '';
 
   try {
-    const dr=gaDateRange(currentPeriod), drP=gaDateRange(currentPeriod,currentPeriod);
-    const gdr=gscDateRange(currentPeriod), gdrP=gscDateRange(currentPeriod,currentPeriod);
+    const d1=dr(currentPeriod), d2=dr(currentPeriod,currentPeriod);
+    const g1=gdr(currentPeriod), g2=gdr(currentPeriod,currentPeriod);
 
-    const [wo,wop,wd,wch,wdev,we,wep,wc,wcp, ao,aop,ad,ae,aos,ag,aeng, go,gop,gd,gq,gqp,gp] = await Promise.all([
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[dr],metrics:[{name:'sessions'},{name:'activeUsers'},{name:'bounceRate'},{name:'averageSessionDuration'}]}),
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[drP],metrics:[{name:'sessions'},{name:'activeUsers'},{name:'bounceRate'}]}),
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'sessionDefaultChannelGroup'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:10}),
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'deviceCategory'}],metrics:[{name:'sessions'}]}),
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'eventName'}],metrics:[{name:'eventCount'}],orderBys:[{metric:{metricName:'eventCount'},desc:true}],limit:25}),
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[drP],dimensions:[{name:'eventName'}],metrics:[{name:'eventCount'}],limit:25}),
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:25}),
-      gaRequest(WEB_PROPERTY_ID,{dateRanges:[drP],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],limit:25}),
-      gaRequest(APP_PROPERTY_ID,{dateRanges:[dr],metrics:[{name:'sessions'},{name:'activeUsers'},{name:'averageSessionDuration'},{name:'screenPageViews'}]}),
-      gaRequest(APP_PROPERTY_ID,{dateRanges:[drP],metrics:[{name:'sessions'},{name:'activeUsers'},{name:'averageSessionDuration'}]}),
-      gaRequest(APP_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'date'}],metrics:[{name:'sessions'},{name:'activeUsers'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
-      gaRequest(APP_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'eventName'}],metrics:[{name:'eventCount'}],orderBys:[{metric:{metricName:'eventCount'},desc:true}],limit:20}),
-      gaRequest(APP_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'operatingSystem'},{name:'appVersion'}],metrics:[{name:'activeUsers'}],orderBys:[{metric:{metricName:'activeUsers'},desc:true}],limit:15}),
-      gaRequest(APP_PROPERTY_ID,{dateRanges:[dr],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:15}),
-      gaRequest(APP_PROPERTY_ID,{dateRanges:[dr],metrics:[{name:'userEngagementDuration'},{name:'engagedSessions'},{name:'newUsers'},{name:'dauPerMau'}]}),
-      gscRequest({startDate:gdr.startDate,endDate:gdr.endDate,dimensions:[],rowLimit:1}),
-      gscRequest({startDate:gdrP.startDate,endDate:gdrP.endDate,dimensions:[],rowLimit:1}),
-      gscRequest({startDate:gdr.startDate,endDate:gdr.endDate,dimensions:['date'],rowLimit:90}),
-      gscRequest({startDate:gdr.startDate,endDate:gdr.endDate,dimensions:['query'],rowLimit:20}),
-      gscRequest({startDate:gdrP.startDate,endDate:gdrP.endDate,dimensions:['query'],rowLimit:20}),
-      gscRequest({startDate:gdr.startDate,endDate:gdr.endDate,dimensions:['page'],rowLimit:15})
+    const [wo,wop,wd,wch,wdv,we,wep,wc,wcp,
+           ao,aop,ad,ae,aos,ag,aen,
+           go,gop,gd,gq,gqp,gp] = await Promise.all([
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],metrics:[{name:'sessions'},{name:'activeUsers'},{name:'bounceRate'},{name:'averageSessionDuration'}]}),
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d2],metrics:[{name:'sessions'},{name:'activeUsers'}]}),
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'sessionDefaultChannelGroup'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:10}),
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'deviceCategory'}],metrics:[{name:'sessions'}]}),
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'eventName'}],metrics:[{name:'eventCount'}],orderBys:[{metric:{metricName:'eventCount'},desc:true}],limit:25}),
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d2],dimensions:[{name:'eventName'}],metrics:[{name:'eventCount'}],limit:25}),
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:25}),
+      gaRequest(WEB_PROPERTY_ID,{dateRanges:[d2],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],limit:25}),
+      gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],metrics:[{name:'sessions'},{name:'activeUsers'},{name:'averageSessionDuration'},{name:'screenPageViews'}]}),
+      gaRequest(APP_PROPERTY_ID,{dateRanges:[d2],metrics:[{name:'sessions'},{name:'activeUsers'}]}),
+      gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'date'}],metrics:[{name:'sessions'},{name:'activeUsers'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
+      gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'eventName'}],metrics:[{name:'eventCount'}],orderBys:[{metric:{metricName:'eventCount'},desc:true}],limit:20}),
+      gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'operatingSystem'}],metrics:[{name:'activeUsers'}],orderBys:[{metric:{metricName:'activeUsers'},desc:true}]}),
+      gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:15}),
+      gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],metrics:[{name:'userEngagementDuration'},{name:'engagedSessions'},{name:'newUsers'},{name:'dauPerMau'}]}),
+      gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:[],rowLimit:1}),
+      gscRequest({startDate:g2.startDate,endDate:g2.endDate,dimensions:[],rowLimit:1}),
+      gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['date'],rowLimit:90}),
+      gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['query'],rowLimit:20}),
+      gscRequest({startDate:g2.startDate,endDate:g2.endDate,dimensions:['query'],rowLimit:20}),
+      gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['page'],rowLimit:15})
     ]);
 
-    document.getElementById('loading-pane').style.display='none';
+    document.getElementById('loading-pane').style.display = 'none';
     renderAlerts(we,wep,wc,wcp,go,gop,ao,aop);
-    renderOverview(wo,wop,wd,wch,wdev,go,gd,gq);
-    renderApp(ao,aop,ad,ae,aos,ag,aeng,wo,wop);
+    renderOverview(wo,wop,wd,wch,wdv,go,gd,gq);
+    renderApp(ao,aop,ad,ae,aos,ag,aen,wo,wop);
     renderTraffic(wc,wch);
     renderSEO(go,gop,gd,gq,gqp,gp);
     renderEvents(we,wep);
     renderGeo(wc,wcp);
 
   } catch(e) {
-    document.getElementById('loading-pane').style.display='none';
-    showError(e.message + '<br><small>Check your account has access to both GA4 properties and Search Console.</small>');
+    document.getElementById('loading-pane').style.display = 'none';
+    document.getElementById('error-section').innerHTML = `<div class="error-box"><strong>Error loading data:</strong> ${e.message}<br><small>If this says 401, your session has expired — please sign out and sign in again.</small></div>`;
   }
 }
 
-function renderAlerts(events,eventsPrev,countries,countriesPrev,gscCurr,gscPrev,appCurr,appPrev) {
-  const alerts=[];
-  const evRows=parseRows(events), prevMap={};
-  parseRows(eventsPrev).forEach(r=>prevMap[r.eventName]=r.eventCount);
-  const gl=evRows.find(r=>r.eventName==='generate_lead'), glPrev=prevMap['generate_lead']||0;
-  if (!gl||gl.eventCount===0) alerts.push({t:'red',i:'⚠',title:'generate_lead has dropped to ZERO',desc:`No lead events in the last ${currentPeriod} days. Previously ${Math.round(glPrev)} events. Check your form tracking immediately.`});
-  else if (glPrev>0&&gl.eventCount<glPrev*0.5) alerts.push({t:'amber',i:'▼',title:`generate_lead down ${Math.round((1-gl.eventCount/glPrev)*100)}% vs previous period`,desc:`Was ${Math.round(glPrev)}, now ${Math.round(gl.eventCount)} events.`});
-  else alerts.push({t:'green',i:'✓',title:`generate_lead firing normally — ${Math.round(gl.eventCount)} events`,desc:`${gl.eventCount>=glPrev?'+':''}${pct(gl.eventCount,glPrev)}% vs previous period.`});
-  const cc=gscCurr.rows?.[0]?.clicks||0, pc=gscPrev.rows?.[0]?.clicks||1;
-  if (pc>0&&cc<pc*0.7) alerts.push({t:'amber',i:'🔍',title:`Search Console clicks down ${Math.round((1-cc/pc)*100)}% vs previous period`,desc:`Was ${fmt(pc)} clicks, now ${fmt(cc)}. Check SEO tab.`});
-  const as=appCurr.rows?.[0]?.metricValues?.[0]?.value||0, aps=appPrev.rows?.[0]?.metricValues?.[0]?.value||1;
-  if (aps>0&&as<aps*0.5) alerts.push({t:'amber',i:'📱',title:`App sessions down ${Math.round((1-as/aps)*100)}% vs previous period`,desc:'App engagement has dropped significantly.'});
-  const cRows=parseRows(countries), susp=cRows.filter(r=>!KNOWN_COUNTRIES.includes(r.country)&&r.sessions>30);
-  if (susp.length>0) alerts.push({t:'amber',i:'🔒',title:`Unusual traffic from ${susp.length} unexpected ${susp.length===1?'country':'countries'}`,desc:susp.slice(0,4).map(r=>`${r.country} (${Math.round(r.sessions)})`).join(', ')+'. Check Geography tab.'});
-  document.getElementById('alerts-section').innerHTML=alerts.map(a=>`<div class="alert alert-${a.t}"><span class="alert-icon">${a.i}</span><div><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div></div>`).join('');
+// ---- RENDER ALERTS ----
+function renderAlerts(ev,evp,co,cop,gc,gcp,ac,acp) {
+  const alerts = [];
+  const evR=parseRows(ev), pm={};
+  parseRows(evp).forEach(r=>pm[r.eventName]=r.eventCount);
+  const gl=evR.find(r=>r.eventName==='generate_lead'), glp=pm['generate_lead']||0;
+  if (!gl||gl.eventCount===0) alerts.push({t:'red',i:'⚠',ti:'generate_lead has dropped to ZERO',de:`No lead events in the last ${currentPeriod} days. Previously ${Math.round(glp)} events. Check your form tracking immediately.`});
+  else if (glp>0&&gl.eventCount<glp*0.5) alerts.push({t:'amber',i:'▼',ti:`generate_lead down ${Math.round((1-gl.eventCount/glp)*100)}% vs previous period`,de:`Was ${Math.round(glp)}, now ${Math.round(gl.eventCount)} events.`});
+  else alerts.push({t:'green',i:'✓',ti:`generate_lead firing normally — ${Math.round(gl.eventCount)} events`,de:`${gl.eventCount>=glp?'+':''}${pct(gl.eventCount,glp)}% vs previous period.`});
+  const cc=gc.rows?.[0]?.clicks||0, pc=gcp.rows?.[0]?.clicks||1;
+  if (pc>0&&cc<pc*0.7) alerts.push({t:'amber',i:'🔍',ti:`Search Console clicks down ${Math.round((1-cc/pc)*100)}% vs previous period`,de:`Was ${fmt(pc)}, now ${fmt(cc)}. Check SEO tab.`});
+  const as2=ac.rows?.[0]?.metricValues?.[0]?.value||0, aps=acp.rows?.[0]?.metricValues?.[0]?.value||1;
+  if (aps>0&&as2<aps*0.5) alerts.push({t:'amber',i:'📱',ti:`App sessions down ${Math.round((1-as2/aps)*100)}% vs previous period`,de:'App engagement has dropped significantly.'});
+  const cR=parseRows(co), su=cR.filter(r=>!KNOWN_COUNTRIES.includes(r.country)&&r.sessions>30);
+  if (su.length>0) alerts.push({t:'amber',i:'🔒',ti:`Unusual traffic from ${su.length} unexpected ${su.length===1?'country':'countries'}`,de:su.slice(0,4).map(r=>`${r.country} (${Math.round(r.sessions)})`).join(', ')+'. Check Geography tab.'});
+  document.getElementById('alerts-section').innerHTML=alerts.map(a=>`<div class="alert alert-${a.t}"><span class="alert-icon">${a.i}</span><div><div class="alert-title">${a.ti}</div><div class="alert-desc">${a.de}</div></div></div>`).join('');
 }
 
-function renderOverview(overview,prev,daily,channels,devices,gscOverview,gscDaily,gscQueries) {
-  const m=overview.rows?.[0]?.metricValues||[], mp=prev.rows?.[0]?.metricValues||[];
-  const sessions=parseFloat(m[0]?.value||0), users=parseFloat(m[1]?.value||0);
-  const pSess=parseFloat(mp[0]?.value||1), pUsers=parseFloat(mp[1]?.value||1);
-  const gClicks=gscOverview.rows?.[0]?.clicks||0, gImpr=gscOverview.rows?.[0]?.impressions||0;
-  const gPos=gscOverview.rows?.[0]?.position||0, gCtr=(gscOverview.rows?.[0]?.ctr||0)*100;
+// ---- RENDER OVERVIEW ----
+function renderOverview(ov,ovp,daily,ch,dv,go,gd,gq) {
+  const m=ov.rows?.[0]?.metricValues||[], mp=ovp.rows?.[0]?.metricValues||[];
+  const s=parseFloat(m[0]?.value||0), u=parseFloat(m[1]?.value||0);
+  const sp=parseFloat(mp[0]?.value||1), up=parseFloat(mp[1]?.value||1);
+  const gc=go.rows?.[0]?.clicks||0, gi=go.rows?.[0]?.impressions||0, gp=go.rows?.[0]?.position||0, gct=(go.rows?.[0]?.ctr||0)*100;
   document.getElementById('overview-metrics').innerHTML=[
-    {label:'Web Sessions',val:fmt(sessions),delta:`${sessions>=pSess?'+':''}${pct(sessions,pSess)}% vs prev`,up:sessions>=pSess},
-    {label:'Web Users',val:fmt(users),delta:`${users>=pUsers?'+':''}${pct(users,pUsers)}% vs prev`,up:users>=pUsers},
-    {label:'GSC Clicks',val:fmt(gClicks),delta:'',up:null},
-    {label:'Impressions',val:fmt(gImpr),delta:'',up:null},
-    {label:'Avg Position',val:gPos.toFixed(1),delta:'',up:null},
-    {label:'CTR',val:gCtr.toFixed(1)+'%',delta:'',up:null}
-  ].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div>${m.delta?`<div class="metric-delta ${m.up?'up':'down'}">${m.delta}</div>`:''}</div>`).join('');
+    {l:'Web Sessions',v:fmt(s),d:`${s>=sp?'+':''}${pct(s,sp)}% vs prev`,u:s>=sp},
+    {l:'Web Users',v:fmt(u),d:`${u>=up?'+':''}${pct(u,up)}% vs prev`,u:u>=up},
+    {l:'GSC Clicks',v:fmt(gc)},{l:'Impressions',v:fmt(gi)},{l:'Avg Position',v:gp.toFixed(1)},{l:'CTR',v:gct.toFixed(1)+'%'}
+  ].map(x=>`<div class="metric"><div class="metric-label">${x.l}</div><div class="metric-value">${x.v}</div>${x.d?`<div class="metric-delta ${x.u?'up':'down'}">${x.d}</div>`:''}</div>`).join('');
 
-  const dRows=parseRows(daily);
-  destroyChart('sessions-chart');
-  charts['sessions-chart']=new Chart(document.getElementById('sessions-chart'),{type:'line',data:{labels:dRows.map(r=>r.date.slice(4,6)+'/'+r.date.slice(6)),datasets:[{label:'Sessions',data:dRows.map(r=>r.sessions),borderColor:'#1a6ef5',backgroundColor:'rgba(26,110,245,0.07)',fill:true,tension:0.35,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxRotation:45,autoSkip:true,maxTicksLimit:14,font:{size:11}}},y:{ticks:{font:{size:11}}}}}});
+  const dr2=parseRows(daily);
+  dc('sessions-chart');
+  charts['sessions-chart']=new Chart(document.getElementById('sessions-chart'),{type:'line',data:{labels:dr2.map(r=>r.date.slice(4,6)+'/'+r.date.slice(6)),datasets:[{label:'Sessions',data:dr2.map(r=>r.sessions),borderColor:'#1a6ef5',backgroundColor:'rgba(26,110,245,0.07)',fill:true,tension:0.35,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{maxRotation:45,autoSkip:true,maxTicksLimit:14,font:{size:11}}},y:{ticks:{font:{size:11}}}}}});
 
-  const gRows=(gscDaily.rows||[]).sort((a,b)=>a.keys[0].localeCompare(b.keys[0]));
-  destroyChart('gsc-overview-chart');
-  charts['gsc-overview-chart']=new Chart(document.getElementById('gsc-overview-chart'),{type:'line',data:{labels:gRows.map(r=>{const d=r.keys[0];return d.slice(5,7)+'/'+d.slice(8);}),datasets:[{label:'Clicks',data:gRows.map(r=>r.clicks),borderColor:'#2d7a3a',backgroundColor:'rgba(45,122,58,0.07)',fill:true,tension:0.35,pointRadius:2,yAxisID:'y'},{label:'Impressions',data:gRows.map(r=>r.impressions),borderColor:'#d97706',fill:false,tension:0.35,pointRadius:2,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{y:{ticks:{font:{size:11}}},y1:{position:'right',ticks:{font:{size:11}},grid:{drawOnChartArea:false}}}}});
+  const gr=(gd.rows||[]).sort((a,b)=>a.keys[0].localeCompare(b.keys[0]));
+  dc('gsc-overview-chart');
+  charts['gsc-overview-chart']=new Chart(document.getElementById('gsc-overview-chart'),{type:'line',data:{labels:gr.map(r=>{const d=r.keys[0];return d.slice(5,7)+'/'+d.slice(8);}),datasets:[{label:'Clicks',data:gr.map(r=>r.clicks),borderColor:'#2d7a3a',backgroundColor:'rgba(45,122,58,0.07)',fill:true,tension:0.35,pointRadius:2,yAxisID:'y'},{label:'Impressions',data:gr.map(r=>r.impressions),borderColor:'#d97706',fill:false,tension:0.35,pointRadius:2,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{y:{ticks:{font:{size:11}}},y1:{position:'right',ticks:{font:{size:11}},grid:{drawOnChartArea:false}}}}});
 
-  document.getElementById('top-queries-list').innerHTML=(gscQueries.rows||[]).slice(0,6).map(r=>`<div class="data-row"><span class="row-name" style="font-size:12px;">${r.keys[0]}</span>${posBadge(r.position)}<span class="row-sub">${fmt(r.clicks)}</span></div>`).join('');
+  document.getElementById('top-queries-list').innerHTML=(gq.rows||[]).slice(0,6).map(r=>`<div class="data-row"><span class="row-name" style="font-size:12px;">${r.keys[0]}</span>${posBadge(r.position)}<span class="row-sub">${fmt(r.clicks)}</span></div>`).join('');
 
-  const chRows=parseRows(channels), chTotal=chRows.reduce((s,r)=>s+r.sessions,0);
-  document.getElementById('channel-list').innerHTML=chRows.slice(0,7).map(r=>{const p=chTotal>0?Math.round(r.sessions/chTotal*100):0;return`<div class="data-row"><span class="row-name">${r.sessionDefaultChannelGroup}</span><div class="bar-bg"><div class="bar-fill" style="width:${p}%;background:#1a6ef5;opacity:0.7;"></div></div><span class="row-val" style="min-width:32px;">${p}%</span></div>`;}).join('');
+  const cR=parseRows(ch), ct=cR.reduce((s,r)=>s+r.sessions,0);
+  document.getElementById('channel-list').innerHTML=cR.slice(0,7).map(r=>{const p=ct>0?Math.round(r.sessions/ct*100):0;return`<div class="data-row"><span class="row-name">${r.sessionDefaultChannelGroup}</span><div class="bar-bg"><div class="bar-fill" style="width:${p}%;background:#1a6ef5;opacity:0.7;"></div></div><span class="row-val" style="min-width:32px;">${p}%</span></div>`;}).join('');
 
-  const devRows=parseRows(devices), devColors={mobile:'#1a6ef5',desktop:'#2d7a3a',tablet:'#d97706'};
-  destroyChart('device-chart');
-  charts['device-chart']=new Chart(document.getElementById('device-chart'),{type:'doughnut',data:{labels:devRows.map(r=>r.deviceCategory),datasets:[{data:devRows.map(r=>Math.round(r.sessions)),backgroundColor:devRows.map(r=>devColors[r.deviceCategory]||'#999'),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{font:{size:11},boxWidth:10,padding:8}}}}});
+  const dvR=parseRows(dv), dvC={mobile:'#1a6ef5',desktop:'#2d7a3a',tablet:'#d97706'};
+  dc('device-chart');
+  charts['device-chart']=new Chart(document.getElementById('device-chart'),{type:'doughnut',data:{labels:dvR.map(r=>r.deviceCategory),datasets:[{data:dvR.map(r=>Math.round(r.sessions)),backgroundColor:dvR.map(r=>dvC[r.deviceCategory]||'#999'),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{font:{size:11},boxWidth:10,padding:8}}}}});
 }
 
-function renderApp(appCurr,appPrev,appDaily,appEvents,appOS,appGeo,appEng,webCurr,webPrev) {
-  const am=appCurr.rows?.[0]?.metricValues||[], amp=appPrev.rows?.[0]?.metricValues||[];
+// ---- RENDER APP ----
+function renderApp(ac,acp,ad2,ae,aos,ag,aen,wc,wcp) {
+  const am=ac.rows?.[0]?.metricValues||[], amp=acp.rows?.[0]?.metricValues||[];
   const aS=parseFloat(am[0]?.value||0), aU=parseFloat(am[1]?.value||0), aDur=parseFloat(am[2]?.value||0), aV=parseFloat(am[3]?.value||0);
   const aSP=parseFloat(amp[0]?.value||1), aUP=parseFloat(amp[1]?.value||1);
-  const eng=appEng.rows?.[0]?.metricValues||[];
-  const eDur=parseFloat(eng[0]?.value||0), eSess=parseFloat(eng[1]?.value||0), nU=parseFloat(eng[2]?.value||0), dM=parseFloat(eng[3]?.value||0)*100;
+  const en=aen.rows?.[0]?.metricValues||[];
+  const eDur=parseFloat(en[0]?.value||0), eSess=parseFloat(en[1]?.value||0), nU=parseFloat(en[2]?.value||0), dM=parseFloat(en[3]?.value||0)*100;
   document.getElementById('app-metrics').innerHTML=[
-    {label:'App Sessions',val:fmt(aS),delta:`${aS>=aSP?'+':''}${pct(aS,aSP)}% vs prev`,up:aS>=aSP},
-    {label:'Active Users',val:fmt(aU),delta:`${aU>=aUP?'+':''}${pct(aU,aUP)}% vs prev`,up:aU>=aUP},
-    {label:'New Users',val:fmt(nU)},{label:'Avg Session',val:Math.floor(aDur/60)+'m '+Math.round(aDur%60)+'s'},
-    {label:'Screen Views',val:fmt(aV)},{label:'DAU/MAU',val:dM.toFixed(1)+'%',sub:'Stickiness'}
-  ].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div>${m.delta?`<div class="metric-delta ${m.up?'up':'down'}">${m.delta}</div>`:''}${m.sub?`<div class="metric-sub">${m.sub}</div>`:''}</div>`).join('');
+    {l:'App Sessions',v:fmt(aS),d:`${aS>=aSP?'+':''}${pct(aS,aSP)}% vs prev`,u:aS>=aSP},
+    {l:'Active Users',v:fmt(aU),d:`${aU>=aUP?'+':''}${pct(aU,aUP)}% vs prev`,u:aU>=aUP},
+    {l:'New Users',v:fmt(nU)},{l:'Avg Session',v:Math.floor(aDur/60)+'m '+Math.round(aDur%60)+'s'},
+    {l:'Screen Views',v:fmt(aV)},{l:'DAU/MAU',v:dM.toFixed(1)+'%',s:'Stickiness'}
+  ].map(x=>`<div class="metric"><div class="metric-label">${x.l}</div><div class="metric-value">${x.v}</div>${x.d?`<div class="metric-delta ${x.u?'up':'down'}">${x.d}</div>`:''}${x.s?`<div class="metric-sub">${x.s}</div>`:''}</div>`).join('');
 
-  const wm=webCurr.rows?.[0]?.metricValues||[], wmp=webPrev.rows?.[0]?.metricValues||[];
+  const wm=wc.rows?.[0]?.metricValues||[], wmp=wcp.rows?.[0]?.metricValues||[];
   const wS=parseFloat(wm[0]?.value||0), wU=parseFloat(wm[1]?.value||0), wDur=parseFloat(wm[3]?.value||0), wSP=parseFloat(wmp[0]?.value||1);
-  document.getElementById('web-compare-metrics').innerHTML=[{label:'Sessions',val:fmt(wS),delta:`${wS>=wSP?'+':''}${pct(wS,wSP)}%`,up:wS>=wSP},{label:'Users',val:fmt(wU)},{label:'Avg Session',val:Math.floor(wDur/60)+'m '+Math.round(wDur%60)+'s'}].map(m=>`<div class="data-row"><span class="row-name">${m.label}</span><span class="row-val">${m.val}</span>${m.delta?`<span style="font-size:11px;" class="${m.up?'up':'down'}">${m.delta}</span>`:''}</div>`).join('');
-  document.getElementById('app-compare-metrics').innerHTML=[{label:'Sessions',val:fmt(aS),delta:`${aS>=aSP?'+':''}${pct(aS,aSP)}%`,up:aS>=aSP},{label:'Active Users',val:fmt(aU)},{label:'Avg Session',val:Math.floor(aDur/60)+'m '+Math.round(aDur%60)+'s'}].map(m=>`<div class="data-row"><span class="row-name">${m.label}</span><span class="row-val">${m.val}</span>${m.delta?`<span style="font-size:11px;" class="${m.up?'up':'down'}">${m.delta}</span>`:''}</div>`).join('');
+  document.getElementById('web-compare-metrics').innerHTML=[{l:'Sessions',v:fmt(wS),d:`${wS>=wSP?'+':''}${pct(wS,wSP)}%`,u:wS>=wSP},{l:'Users',v:fmt(wU)},{l:'Avg Session',v:Math.floor(wDur/60)+'m '+Math.round(wDur%60)+'s'}].map(x=>`<div class="data-row"><span class="row-name">${x.l}</span><span class="row-val">${x.v}</span>${x.d?`<span style="font-size:11px;" class="${x.u?'up':'down'}">${x.d}</span>`:''}</div>`).join('');
+  document.getElementById('app-compare-metrics').innerHTML=[{l:'Sessions',v:fmt(aS),d:`${aS>=aSP?'+':''}${pct(aS,aSP)}%`,u:aS>=aSP},{l:'Active Users',v:fmt(aU)},{l:'Avg Session',v:Math.floor(aDur/60)+'m '+Math.round(aDur%60)+'s'}].map(x=>`<div class="data-row"><span class="row-name">${x.l}</span><span class="row-val">${x.v}</span>${x.d?`<span style="font-size:11px;" class="${x.u?'up':'down'}">${x.d}</span>`:''}</div>`).join('');
 
-  const adRows=parseRows(appDaily);
-  destroyChart('app-sessions-chart');
-  charts['app-sessions-chart']=new Chart(document.getElementById('app-sessions-chart'),{type:'line',data:{labels:adRows.map(r=>r.date.slice(4,6)+'/'+r.date.slice(6)),datasets:[{label:'Sessions',data:adRows.map(r=>r.sessions),borderColor:'#2d7a3a',backgroundColor:'rgba(45,122,58,0.08)',fill:true,tension:0.35,pointRadius:2},{label:'Active Users',data:adRows.map(r=>r.activeUsers),borderColor:'#6d28d9',fill:false,tension:0.35,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{x:{ticks:{maxRotation:45,autoSkip:true,maxTicksLimit:14,font:{size:11}}},y:{ticks:{font:{size:11}}}}}});
+  const adR=parseRows(ad2);
+  dc('app-sessions-chart');
+  charts['app-sessions-chart']=new Chart(document.getElementById('app-sessions-chart'),{type:'line',data:{labels:adR.map(r=>r.date.slice(4,6)+'/'+r.date.slice(6)),datasets:[{label:'Sessions',data:adR.map(r=>r.sessions),borderColor:'#2d7a3a',backgroundColor:'rgba(45,122,58,0.08)',fill:true,tension:0.35,pointRadius:2},{label:'Active Users',data:adR.map(r=>r.activeUsers),borderColor:'#6d28d9',fill:false,tension:0.35,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{x:{ticks:{maxRotation:45,autoSkip:true,maxTicksLimit:14,font:{size:11}}},y:{ticks:{font:{size:11}}}}}});
 
-  destroyChart('app-web-chart');
+  dc('app-web-chart');
   charts['app-web-chart']=new Chart(document.getElementById('app-web-chart'),{type:'doughnut',data:{labels:['Website Users','App Users'],datasets:[{data:[Math.round(wU),Math.round(aU)],backgroundColor:['#1a6ef5','#2d7a3a'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{font:{size:13},boxWidth:14}}}}});
 
-  document.getElementById('app-events-list').innerHTML=parseRows(appEvents).slice(0,12).map(r=>`<div class="data-row"><span class="row-name mono">${r.eventName}</span><span class="row-val">${fmt(r.eventCount)}</span></div>`).join('');
+  document.getElementById('app-events-list').innerHTML=parseRows(ae).slice(0,12).map(r=>`<div class="data-row"><span class="row-name mono">${r.eventName}</span><span class="row-val">${fmt(r.eventCount)}</span></div>`).join('');
 
-  const osRows=parseRows(appOS), osMap={};
-  osRows.forEach(r=>{if(!osMap[r.operatingSystem])osMap[r.operatingSystem]=0;osMap[r.operatingSystem]+=r.activeUsers;});
-  const osTotal=Object.values(osMap).reduce((s,v)=>s+v,0);
-  document.getElementById('app-os-list').innerHTML=Object.entries(osMap).sort((a,b)=>b[1]-a[1]).map(([os,u])=>{const p=osTotal>0?Math.round(u/osTotal*100):0;const bc=os==='Android'?'platform-android':os==='iOS'?'platform-ios':'';return`<div class="data-row"><span class="row-name"><span class="platform-badge ${bc}">${os}</span></span><div class="bar-bg"><div class="bar-fill" style="width:${p}%;background:${os==='Android'?'#2e7d32':'#6a1b9a'};opacity:0.7;"></div></div><span class="row-val">${fmt(u)}</span><span class="row-sub">${p}%</span></div>`;}).join('')||'<p style="color:var(--text3);font-size:13px;padding:0.5rem 0;">No OS data available yet.</p>';
+  const osR=parseRows(aos), osT=osR.reduce((s,r)=>s+r.activeUsers,0);
+  document.getElementById('app-os-list').innerHTML=osR.map(r=>{const p=osT>0?Math.round(r.activeUsers/osT*100):0;const bc=r.operatingSystem==='Android'?'platform-android':r.operatingSystem==='iOS'?'platform-ios':'';return`<div class="data-row"><span class="row-name"><span class="platform-badge ${bc}">${r.operatingSystem}</span></span><div class="bar-bg"><div class="bar-fill" style="width:${p}%;background:${r.operatingSystem==='Android'?'#2e7d32':'#6a1b9a'};opacity:0.7;"></div></div><span class="row-val">${fmt(r.activeUsers)}</span><span class="row-sub">${p}%</span></div>`;}).join('')||'<p style="color:var(--text3);font-size:13px;padding:0.5rem 0;">No OS data yet.</p>';
 
-  document.getElementById('app-engagement-metrics').innerHTML=[{label:'Engaged Sessions',val:fmt(eSess)},{label:'Total Engagement',val:Math.floor(eDur/3600)+'h '+Math.floor((eDur%3600)/60)+'m'},{label:'New Users',val:fmt(nU)},{label:'DAU/MAU Ratio',val:dM.toFixed(1)+'%',sub:'Higher = stickier'}].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div>${m.sub?`<div class="metric-sub">${m.sub}</div>`:''}</div>`).join('');
+  document.getElementById('app-engagement-metrics').innerHTML=[{l:'Engaged Sessions',v:fmt(eSess)},{l:'Total Engagement',v:Math.floor(eDur/3600)+'h '+Math.floor((eDur%3600)/60)+'m'},{l:'New Users',v:fmt(nU)},{l:'DAU/MAU',v:dM.toFixed(1)+'%',s:'Higher = stickier'}].map(x=>`<div class="metric"><div class="metric-label">${x.l}</div><div class="metric-value">${x.v}</div>${x.s?`<div class="metric-sub">${x.s}</div>`:''}</div>`).join('');
 
-  const geoRows=parseRows(appGeo), geoTotal=geoRows.reduce((s,r)=>s+r.sessions,0);
-  document.getElementById('app-geo-list').innerHTML=geoRows.map(r=>{const p=geoTotal>0?Math.round(r.sessions/geoTotal*100):0;return`<div class="data-row"><span class="flag">${FLAGS[r.country]||'🌍'}</span><span class="row-name">${r.country}</span><div class="bar-bg"><div class="bar-fill" style="width:${p*2}%;max-width:100%;background:#2d7a3a;opacity:0.7;"></div></div><span class="row-val">${fmt(r.sessions)}</span></div>`;}).join('');
+  const gR=parseRows(ag), gT=gR.reduce((s,r)=>s+r.sessions,0);
+  document.getElementById('app-geo-list').innerHTML=gR.map(r=>{const p=gT>0?Math.round(r.sessions/gT*100):0;return`<div class="data-row"><span class="flag">${FLAGS[r.country]||'🌍'}</span><span class="row-name">${r.country}</span><div class="bar-bg"><div class="bar-fill" style="width:${p*2}%;max-width:100%;background:#2d7a3a;opacity:0.7;"></div></div><span class="row-val">${fmt(r.sessions)}</span></div>`;}).join('');
 }
 
-function renderTraffic(countries,channels) {
-  const cRows=parseRows(countries), total=cRows.reduce((s,r)=>s+r.sessions,0);
-  const uk=cRows.filter(r=>r.country==='United Kingdom').reduce((s,r)=>s+r.sessions,0), intl=total-uk;
-  document.getElementById('uk-metrics').innerHTML=[{label:'UK sessions',val:fmt(uk)},{label:'International',val:fmt(intl)},{label:'UK share',val:total>0?Math.round(uk/total*100)+'%':'0%'},{label:'Countries',val:cRows.length}].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div></div>`).join('');
-  destroyChart('uk-chart');
-  charts['uk-chart']=new Chart(document.getElementById('uk-chart'),{type:'doughnut',data:{labels:['United Kingdom','International'],datasets:[{data:[Math.round(uk),Math.round(intl)],backgroundColor:['#1a6ef5','#c0392b'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{font:{size:13},boxWidth:14}}}}});
-  const chRows=parseRows(channels), chTotal=chRows.reduce((s,r)=>s+r.sessions,0);
-  document.getElementById('source-list').innerHTML=chRows.map(r=>{const p=chTotal>0?Math.round(r.sessions/chTotal*100):0;return`<div class="data-row"><span class="row-name">${r.sessionDefaultChannelGroup}</span><span class="row-sub">${fmt(r.sessions)}</span><div class="bar-bg" style="max-width:100px;"><div class="bar-fill" style="width:${p*2}%;max-width:100%;background:#1a6ef5;opacity:0.7;"></div></div><span class="row-val" style="min-width:32px;">${p}%</span></div>`;}).join('');
+// ---- RENDER TRAFFIC ----
+function renderTraffic(co,ch) {
+  const cR=parseRows(co), t=cR.reduce((s,r)=>s+r.sessions,0);
+  const uk=cR.filter(r=>r.country==='United Kingdom').reduce((s,r)=>s+r.sessions,0);
+  document.getElementById('uk-metrics').innerHTML=[{l:'UK sessions',v:fmt(uk)},{l:'International',v:fmt(t-uk)},{l:'UK share',v:t>0?Math.round(uk/t*100)+'%':'0%'},{l:'Countries',v:cR.length}].map(x=>`<div class="metric"><div class="metric-label">${x.l}</div><div class="metric-value">${x.v}</div></div>`).join('');
+  dc('uk-chart');
+  charts['uk-chart']=new Chart(document.getElementById('uk-chart'),{type:'doughnut',data:{labels:['United Kingdom','International'],datasets:[{data:[Math.round(uk),Math.round(t-uk)],backgroundColor:['#1a6ef5','#c0392b'],borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{font:{size:13},boxWidth:14}}}}});
+  const chR=parseRows(ch), chT=chR.reduce((s,r)=>s+r.sessions,0);
+  document.getElementById('source-list').innerHTML=chR.map(r=>{const p=chT>0?Math.round(r.sessions/chT*100):0;return`<div class="data-row"><span class="row-name">${r.sessionDefaultChannelGroup}</span><span class="row-sub">${fmt(r.sessions)}</span><div class="bar-bg" style="max-width:100px;"><div class="bar-fill" style="width:${p*2}%;max-width:100%;background:#1a6ef5;opacity:0.7;"></div></div><span class="row-val" style="min-width:32px;">${p}%</span></div>`;}).join('');
 }
 
-function renderSEO(gscCurr,gscPrev,gscDaily,gscQueries,gscQueriesPrev,gscPages) {
-  const cc=gscCurr.rows?.[0]?.clicks||0, pc=gscPrev.rows?.[0]?.clicks||1;
-  const ci=gscCurr.rows?.[0]?.impressions||0, pi=gscPrev.rows?.[0]?.impressions||1;
-  const cp=gscCurr.rows?.[0]?.position||0, ctr=(gscCurr.rows?.[0]?.ctr||0)*100;
-  document.getElementById('seo-metrics').innerHTML=[{label:'Clicks',val:fmt(cc),delta:`${cc>=pc?'+':''}${pct(cc,pc)}% vs prev`,up:cc>=pc},{label:'Impressions',val:fmt(ci),delta:`${ci>=pi?'+':''}${pct(ci,pi)}% vs prev`,up:ci>=pi},{label:'Avg position',val:cp.toFixed(1)},{label:'CTR',val:ctr.toFixed(1)+'%'}].map(m=>`<div class="metric"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div>${m.delta?`<div class="metric-delta ${m.up?'up':'down'}">${m.delta}</div>`:''}</div>`).join('');
-  const gRows=(gscDaily.rows||[]).sort((a,b)=>a.keys[0].localeCompare(b.keys[0]));
-  destroyChart('gsc-trend-chart');
-  charts['gsc-trend-chart']=new Chart(document.getElementById('gsc-trend-chart'),{type:'line',data:{labels:gRows.map(r=>{const d=r.keys[0];return d.slice(5,7)+'/'+d.slice(8);}),datasets:[{label:'Clicks',data:gRows.map(r=>r.clicks),borderColor:'#2d7a3a',backgroundColor:'rgba(45,122,58,0.08)',fill:true,tension:0.35,pointRadius:2,yAxisID:'y'},{label:'Impressions',data:gRows.map(r=>r.impressions),borderColor:'#d97706',fill:false,tension:0.35,pointRadius:2,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{y:{ticks:{font:{size:11}}},y1:{position:'right',ticks:{font:{size:11}},grid:{drawOnChartArea:false}}}}});
-  const qRows=gscQueries.rows||[], prevQMap={};
-  (gscQueriesPrev.rows||[]).forEach(r=>prevQMap[r.keys[0]]=r);
-  document.getElementById('gsc-queries-list').innerHTML=qRows.slice(0,10).map(r=>`<div class="data-row"><span class="row-name" style="font-size:12px;">${r.keys[0]}</span>${posBadge(r.position)}<span class="row-sub">${fmt(r.clicks)}</span></div>`).join('');
-  document.getElementById('gsc-pages-list').innerHTML=(gscPages.rows||[]).slice(0,10).map(r=>{const page=r.keys[0].replace('https://www.aplaceinthesun.com','').slice(0,45)||'/';return`<div class="data-row"><span class="row-name mono">${page}</span><span class="row-sub">${fmt(r.clicks)} clicks</span></div>`;}).join('');
-  const posChanges=qRows.map(r=>{const prev=prevQMap[r.keys[0]];const change=prev?prev.position-r.position:null;return{...r,prevPos:prev?.position,change};}).filter(r=>r.change!==null).sort((a,b)=>Math.abs(b.change)-Math.abs(a.change)).slice(0,12);
-  document.getElementById('gsc-positions-list').innerHTML=posChanges.length?posChanges.map(r=>{const imp=r.change>0;return`<div class="data-row"><span class="row-name" style="font-size:12px;">${r.keys[0]}</span>${posBadge(r.position)}<span style="font-size:12px;min-width:100px;text-align:right;" class="${imp?'up':'down'}">${imp?'▲ +':'▼ '}${Math.abs(r.change).toFixed(1)} places</span><span class="row-sub">prev: #${r.prevPos.toFixed(0)}</span></div>`;}).join(''):'<p style="color:var(--text3);font-size:13px;padding:1rem 0;">Not enough comparison data yet.</p>';
+// ---- RENDER SEO ----
+function renderSEO(gc,gcp,gd,gq,gqp,gpa) {
+  const cc=gc.rows?.[0]?.clicks||0, pc=gcp.rows?.[0]?.clicks||1;
+  const ci=gc.rows?.[0]?.impressions||0, pi=gcp.rows?.[0]?.impressions||1;
+  const cp=gc.rows?.[0]?.position||0, ct=(gc.rows?.[0]?.ctr||0)*100;
+  document.getElementById('seo-metrics').innerHTML=[{l:'Clicks',v:fmt(cc),d:`${cc>=pc?'+':''}${pct(cc,pc)}% vs prev`,u:cc>=pc},{l:'Impressions',v:fmt(ci),d:`${ci>=pi?'+':''}${pct(ci,pi)}% vs prev`,u:ci>=pi},{l:'Avg position',v:cp.toFixed(1)},{l:'CTR',v:ct.toFixed(1)+'%'}].map(x=>`<div class="metric"><div class="metric-label">${x.l}</div><div class="metric-value">${x.v}</div>${x.d?`<div class="metric-delta ${x.u?'up':'down'}">${x.d}</div>`:''}</div>`).join('');
+  const gr=(gd.rows||[]).sort((a,b)=>a.keys[0].localeCompare(b.keys[0]));
+  dc('gsc-trend-chart');
+  charts['gsc-trend-chart']=new Chart(document.getElementById('gsc-trend-chart'),{type:'line',data:{labels:gr.map(r=>{const d=r.keys[0];return d.slice(5,7)+'/'+d.slice(8);}),datasets:[{label:'Clicks',data:gr.map(r=>r.clicks),borderColor:'#2d7a3a',backgroundColor:'rgba(45,122,58,0.08)',fill:true,tension:0.35,pointRadius:2,yAxisID:'y'},{label:'Impressions',data:gr.map(r=>r.impressions),borderColor:'#d97706',fill:false,tension:0.35,pointRadius:2,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{y:{ticks:{font:{size:11}}},y1:{position:'right',ticks:{font:{size:11}},grid:{drawOnChartArea:false}}}}});
+  const qR=gq.rows||[], pqM={};
+  (gqp.rows||[]).forEach(r=>pqM[r.keys[0]]=r);
+  document.getElementById('gsc-queries-list').innerHTML=qR.slice(0,10).map(r=>`<div class="data-row"><span class="row-name" style="font-size:12px;">${r.keys[0]}</span>${posBadge(r.position)}<span class="row-sub">${fmt(r.clicks)}</span></div>`).join('');
+  document.getElementById('gsc-pages-list').innerHTML=(gpa.rows||[]).slice(0,10).map(r=>{const pg=r.keys[0].replace('https://www.aplaceinthesun.com','').slice(0,45)||'/';return`<div class="data-row"><span class="row-name mono">${pg}</span><span class="row-sub">${fmt(r.clicks)} clicks</span></div>`;}).join('');
+  const pc2=qR.map(r=>{const pv=pqM[r.keys[0]];const ch2=pv?pv.position-r.position:null;return{...r,pP:pv?.position,ch:ch2};}).filter(r=>r.ch!==null).sort((a,b)=>Math.abs(b.ch)-Math.abs(a.ch)).slice(0,12);
+  document.getElementById('gsc-positions-list').innerHTML=pc2.length?pc2.map(r=>{const im=r.ch>0;return`<div class="data-row"><span class="row-name" style="font-size:12px;">${r.keys[0]}</span>${posBadge(r.position)}<span style="font-size:12px;min-width:100px;text-align:right;" class="${im?'up':'down'}">${im?'▲ +':'▼ '}${Math.abs(r.ch).toFixed(1)} places</span><span class="row-sub">prev: #${r.pP.toFixed(0)}</span></div>`;}).join(''):'<p style="color:var(--text3);font-size:13px;padding:1rem 0;">Not enough comparison data yet.</p>';
 }
 
+// ---- TRENDS ----
 function buildTrendsCountryFilter() {
   document.getElementById('trends-country-filter').innerHTML=TREND_COUNTRIES.map(c=>`<button class="country-btn${c.code===trendsCountry?' active':''}" onclick="setTrendsCountry('${c.code}')">${c.label}</button>`).join('');
 }
@@ -588,19 +552,19 @@ function setTrendsCountry(code) { trendsCountry=code; buildTrendsCountryFilter()
 function loadTrends() {
   const months=13, labels=[], now=new Date();
   for(let i=months-1;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);labels.push(d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}));}
-  const seasonal=[65,80,85,70,60,55,60,65,75,70,60,55,50];
-  const destData={'Spain':seasonal.map(v=>Math.min(100,v+20)),'France':seasonal.map(v=>Math.min(100,Math.round(v*0.65))),'Italy':seasonal.map(v=>Math.min(100,Math.round(v*0.45))),'Portugal':seasonal.map(v=>Math.min(100,Math.round(v*0.55))),'Cyprus':seasonal.map(v=>Math.min(100,Math.round(v*0.35))),'Greece':seasonal.map(v=>Math.min(100,Math.round(v*0.40))),'Florida':seasonal.map(v=>Math.min(100,Math.round(v*0.30)))};
-  const brandData=seasonal.map(v=>Math.min(100,Math.round(v*0.8)));
+  const s=[65,80,85,70,60,55,60,65,75,70,60,55,50];
+  const dd={'Spain':s.map(v=>Math.min(100,v+20)),'France':s.map(v=>Math.min(100,Math.round(v*0.65))),'Italy':s.map(v=>Math.min(100,Math.round(v*0.45))),'Portugal':s.map(v=>Math.min(100,Math.round(v*0.55))),'Cyprus':s.map(v=>Math.min(100,Math.round(v*0.35))),'Greece':s.map(v=>Math.min(100,Math.round(v*0.40))),'Florida':s.map(v=>Math.min(100,Math.round(v*0.30)))};
+  const bd=s.map(v=>Math.min(100,Math.round(v*0.8)));
   document.getElementById('trends-status').className='info-box';
-  document.getElementById('trends-status').innerHTML='📊 <strong>Illustrative seasonal data shown</strong> — Google Trends blocks direct browser requests (CORS restriction). <a href="https://trends.google.com/trends/explore?q=property+for+sale+in+Spain,property+for+sale+in+France,property+for+sale+in+Portugal,property+for+sale+in+Italy,A+Place+in+the+Sun&geo=GB" target="_blank" style="color:#1e40af;">View live data on Google Trends ↗</a>';
-  const shortTerms=['Spain','France','Italy','Portugal','Cyprus','Greece','Florida'];
-  document.getElementById('trends-legend').innerHTML=shortTerms.map((t,i)=>`<div class="trends-legend-item ${activeTerms.has(i)?'':'inactive'}" onclick="toggleTerm(${i})" id="legend-${i}"><div class="trends-swatch" style="background:${TREND_COLORS[i]}"></div>${t}</div>`).join('');
-  destroyChart('trends-chart');
-  charts['trends-chart']=new Chart(document.getElementById('trends-chart'),{type:'line',data:{labels,datasets:shortTerms.map((t,i)=>({label:'Property in '+t,data:activeTerms.has(i)?destData[t]:[],borderColor:TREND_COLORS[i],backgroundColor:TREND_COLORS[i]+'18',fill:false,tension:0.4,pointRadius:2,hidden:!activeTerms.has(i)}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{font:{size:11}}},x:{ticks:{maxRotation:45,font:{size:11}}}}}});
-  destroyChart('brand-chart');
-  charts['brand-chart']=new Chart(document.getElementById('brand-chart'),{type:'line',data:{labels,datasets:[{label:'A Place in the Sun',data:brandData,borderColor:'#6d28d9',backgroundColor:'rgba(109,40,217,0.08)',fill:true,tension:0.4,pointRadius:2},{label:'Property in Spain (ref)',data:destData['Spain'],borderColor:'#1a6ef5',fill:false,tension:0.4,pointRadius:2,borderDash:[5,5]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{y:{min:0,max:100,ticks:{font:{size:11}}},x:{ticks:{maxRotation:45,font:{size:11}}}}}});
+  document.getElementById('trends-status').innerHTML='📊 <strong>Illustrative seasonal data shown</strong> — Google Trends blocks direct browser requests. <a href="https://trends.google.com/trends/explore?q=property+for+sale+in+Spain,property+for+sale+in+France,property+for+sale+in+Portugal,property+for+sale+in+Italy,A+Place+in+the+Sun&geo=GB" target="_blank" style="color:#1e40af;">View live data on Google Trends ↗</a>';
+  const st=['Spain','France','Italy','Portugal','Cyprus','Greece','Florida'];
+  document.getElementById('trends-legend').innerHTML=st.map((t,i)=>`<div class="trends-legend-item ${activeTerms.has(i)?'':'inactive'}" onclick="toggleTerm(${i})" id="legend-${i}"><div class="trends-swatch" style="background:${TREND_COLORS[i]}"></div>${t}</div>`).join('');
+  dc('trends-chart');
+  charts['trends-chart']=new Chart(document.getElementById('trends-chart'),{type:'line',data:{labels,datasets:st.map((t,i)=>({label:'Property in '+t,data:activeTerms.has(i)?dd[t]:[],borderColor:TREND_COLORS[i],backgroundColor:TREND_COLORS[i]+'18',fill:false,tension:0.4,pointRadius:2,hidden:!activeTerms.has(i)}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{min:0,max:100,ticks:{font:{size:11}}},x:{ticks:{maxRotation:45,font:{size:11}}}}}});
+  dc('brand-chart');
+  charts['brand-chart']=new Chart(document.getElementById('brand-chart'),{type:'line',data:{labels,datasets:[{label:'A Place in the Sun',data:bd,borderColor:'#6d28d9',backgroundColor:'rgba(109,40,217,0.08)',fill:true,tension:0.4,pointRadius:2},{label:'Property in Spain (ref)',data:dd['Spain'],borderColor:'#1a6ef5',fill:false,tension:0.4,pointRadius:2,borderDash:[5,5]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'top',labels:{font:{size:11},boxWidth:10}}},scales:{y:{min:0,max:100,ticks:{font:{size:11}}},x:{ticks:{maxRotation:45,font:{size:11}}}}}});
   const li=labels.length-1;
-  document.getElementById('trends-summary').innerHTML=shortTerms.map((t,i)=>{const v=destData[t][li],pv=destData[t][li-1]||v;const tr=v>pv?'▲':v<pv?'▼':'—';return`<div class="data-row"><div style="width:10px;height:10px;border-radius:2px;background:${TREND_COLORS[i]};flex-shrink:0;"></div><span class="row-name">Property for sale in ${t}</span><span class="${v>pv?'up':v<pv?'down':''}" style="font-size:12px;min-width:20px;">${tr}</span><div class="bar-bg" style="max-width:120px;"><div class="bar-fill" style="width:${v}%;background:${TREND_COLORS[i]};opacity:0.7;"></div></div><span class="row-val">${v}/100</span></div>`;}).join('');
+  document.getElementById('trends-summary').innerHTML=st.map((t,i)=>{const v=dd[t][li],pv=dd[t][li-1]||v;const tr=v>pv?'▲':v<pv?'▼':'—';return`<div class="data-row"><div style="width:10px;height:10px;border-radius:2px;background:${TREND_COLORS[i]};flex-shrink:0;"></div><span class="row-name">Property for sale in ${t}</span><span class="${v>pv?'up':v<pv?'down':''}" style="font-size:12px;min-width:20px;">${tr}</span><div class="bar-bg" style="max-width:120px;"><div class="bar-fill" style="width:${v}%;background:${TREND_COLORS[i]};opacity:0.7;"></div></div><span class="row-val">${v}/100</span></div>`;}).join('');
 }
 
 function toggleTerm(idx) {
@@ -609,17 +573,19 @@ function toggleTerm(idx) {
   if(charts['trends-chart']){charts['trends-chart'].data.datasets.forEach((ds,i)=>{ds.hidden=!activeTerms.has(i);});charts['trends-chart'].update();}
 }
 
-function renderEvents(events,eventsPrev) {
-  const evRows=parseRows(events), prevMap={};
-  parseRows(eventsPrev).forEach(r=>prevMap[r.eventName]=r.eventCount);
-  document.getElementById('events-list').innerHTML=evRows.map(r=>{const prev=prevMap[r.eventName]||0,isZ=r.eventCount===0,isD=prev>0&&r.eventCount<prev*0.6;const dc=isZ?'dot-red':isD?'dot-amber':'dot-green';const delta=prev>0?((r.eventCount/prev-1)*100).toFixed(0)+'%':'new';const star=r.eventName==='generate_lead'?' ★':'';return`<div class="data-row"><div class="dot ${dc}"></div><span class="row-name mono">${r.eventName}${star}</span><span class="row-val">${fmt(r.eventCount)}</span><span class="row-sub ${delta!=='new'?(r.eventCount>=(prev||0)?'up':'down'):''}" style="min-width:50px;">${delta!=='new'?(r.eventCount>=prev?'+':'')+delta:delta}</span><span class="row-sub">prev: ${fmt(prev)}</span></div>`;}).join('');
+// ---- RENDER EVENTS ----
+function renderEvents(ev,evp) {
+  const eR=parseRows(ev), pm={};
+  parseRows(evp).forEach(r=>pm[r.eventName]=r.eventCount);
+  document.getElementById('events-list').innerHTML=eR.map(r=>{const p=pm[r.eventName]||0,z=r.eventCount===0,dw=p>0&&r.eventCount<p*0.6;const dc2=z?'dot-red':dw?'dot-amber':'dot-green';const dl=p>0?((r.eventCount/p-1)*100).toFixed(0)+'%':'new';const st=r.eventName==='generate_lead'?' ★':'';return`<div class="data-row"><div class="dot ${dc2}"></div><span class="row-name mono">${r.eventName}${st}</span><span class="row-val">${fmt(r.eventCount)}</span><span class="row-sub ${dl!=='new'?(r.eventCount>=(p||0)?'up':'down'):''}" style="min-width:50px;">${dl!=='new'?(r.eventCount>=p?'+':'')+dl:dl}</span><span class="row-sub">prev: ${fmt(p)}</span></div>`;}).join('');
 }
 
-function renderGeo(countries,countriesPrev) {
-  const cRows=parseRows(countries), prevMap={};
-  parseRows(countriesPrev).forEach(r=>prevMap[r.country]=r.sessions);
-  const maxS=cRows[0]?.sessions||1;
-  document.getElementById('country-list').innerHTML=cRows.map(r=>{const isK=KNOWN_COUNTRIES.includes(r.country),isS=!isK&&r.sessions>30,isN=!prevMap[r.country];const bW=Math.round(r.sessions/maxS*100);const badge=isS?`<span class="badge badge-red">⚠ check</span>`:isN?`<span class="badge badge-amber">new</span>`:'';return`<div class="data-row"><span class="flag">${FLAGS[r.country]||'🌍'}</span><span class="row-name">${r.country}</span>${badge}<div class="bar-bg" style="max-width:100px;"><div class="bar-fill" style="width:${bW}%;background:${isS?'#c0392b':'#1a6ef5'};opacity:0.7;"></div></div><span class="row-val">${fmt(r.sessions)}</span></div>`;}).join('');
+// ---- RENDER GEO ----
+function renderGeo(co,cop) {
+  const cR=parseRows(co), pm={};
+  parseRows(cop).forEach(r=>pm[r.country]=r.sessions);
+  const mx=cR[0]?.sessions||1;
+  document.getElementById('country-list').innerHTML=cR.map(r=>{const kn=KNOWN_COUNTRIES.includes(r.country),su=!kn&&r.sessions>30,nw=!pm[r.country];const bw=Math.round(r.sessions/mx*100);const bg=su?`<span class="badge badge-red">⚠ check</span>`:nw?`<span class="badge badge-amber">new</span>`:'';return`<div class="data-row"><span class="flag">${FLAGS[r.country]||'🌍'}</span><span class="row-name">${r.country}</span>${bg}<div class="bar-bg" style="max-width:100px;"><div class="bar-fill" style="width:${bw}%;background:${su?'#c0392b':'#1a6ef5'};opacity:0.7;"></div></div><span class="row-val">${fmt(r.sessions)}</span></div>`;}).join('');
 }
 </script>
 </body>
