@@ -17,6 +17,7 @@
     --red: #c0392b; --red-light: #fdecea;
     --amber: #b45309; --amber-light: #fef3e2;
     --purple: #6d28d9; --purple-light: #ede9fe;
+    --teal: #0891b2; --teal-light: #e0f7fa;
     --radius: 10px; --radius-lg: 14px;
   }
   body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 14px; line-height: 1.6; }
@@ -27,7 +28,7 @@
   .auth-logo svg { width: 28px; height: 28px; }
   .auth-card h1 { font-size: 22px; font-weight: 600; margin-bottom: 0.5rem; }
   .auth-card .subtitle { color: var(--text2); font-size: 13px; margin-bottom: 1.5rem; }
-  .auth-features { display: flex; justify-content: center; gap: 1.2rem; margin: 0 0 2rem; flex-wrap: wrap; }
+  .auth-features { display: flex; justify-content: center; gap: 1rem; margin: 0 0 2rem; flex-wrap: wrap; }
   .auth-feature { font-size: 12px; color: var(--text3); }
   .sign-in-btn { display: inline-flex; align-items: center; gap: 12px; padding: 13px 28px; background: var(--surface); border: 1px solid var(--border-strong); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 500; color: var(--text); cursor: pointer; transition: all 0.15s; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
   .sign-in-btn:hover { background: var(--surface2); box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
@@ -43,23 +44,31 @@
   .btn { display: inline-flex; align-items: center; gap: 6px; }
   .btn-danger { border-color: #fca5a5; color: var(--red); }
   .btn-danger:hover { background: var(--red-light); }
+  .btn-primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn-primary:hover { background: #1558c0; }
+  .btn-purple { background: var(--purple); color: white; border-color: var(--purple); }
+  .btn-purple:hover { background: #5b21b6; }
 
   .alerts { margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 8px; }
   .alert { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: var(--radius); border-left: 3px solid; font-size: 13px; }
   .alert-red { background: var(--red-light); border-color: var(--red); }
   .alert-amber { background: var(--amber-light); border-color: var(--amber); }
   .alert-green { background: var(--green-light); border-color: var(--green); }
+  .alert-blue { background: var(--accent-light); border-color: var(--accent); }
+  .alert-purple { background: var(--purple-light); border-color: var(--purple); }
   .alert-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
-  .alert-red .alert-icon { color: var(--red); } .alert-amber .alert-icon { color: var(--amber); } .alert-green .alert-icon { color: var(--green); }
+  .alert-red .alert-icon { color: var(--red); } .alert-amber .alert-icon { color: var(--amber); }
+  .alert-green .alert-icon { color: var(--green); } .alert-blue .alert-icon { color: var(--accent); }
+  .alert-purple .alert-icon { color: var(--purple); }
   .alert-title { font-weight: 600; margin-bottom: 2px; }
   .alert-desc { color: var(--text2); font-size: 12px; }
 
   .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; }
-  .tab { padding: 9px 16px; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; white-space: nowrap; }
+  .tab { padding: 9px 14px; font-size: 13px; font-weight: 500; color: var(--text2); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; white-space: nowrap; }
   .tab:hover { color: var(--text); }
   .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(145px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .metric-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
   .metric { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 15px 17px; }
   .metric-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; }
   .metric-value { font-size: 24px; font-weight: 600; color: var(--text); line-height: 1; }
@@ -79,13 +88,17 @@
   .row-name { flex: 1; color: var(--text); }
   .row-name.mono { font-family: 'DM Mono', monospace; font-size: 11px; }
   .row-val { font-weight: 600; min-width: 55px; text-align: right; }
-  .row-sub { font-size: 11px; color: var(--text3); min-width: 55px; text-align: right; }
+  .row-sub { font-size: 11px; color: var(--text3); min-width: 50px; text-align: right; }
   .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .dot-green { background: #2d7a3a; } .dot-red { background: #c0392b; } .dot-amber { background: #d97706; }
   .flag { font-size: 17px; width: 26px; text-align: center; flex-shrink: 0; }
   .badge { font-size: 11px; padding: 2px 7px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
   .badge-red { background: var(--red-light); color: var(--red); }
   .badge-amber { background: var(--amber-light); color: var(--amber); }
+  .badge-green { background: var(--green-light); color: var(--green); }
+  .badge-blue { background: var(--accent-light); color: var(--accent); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .badge-teal { background: var(--teal-light); color: var(--teal); }
 
   .platform-badge { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
   .platform-android { background: #e8f5e9; color: #2e7d32; }
@@ -100,11 +113,34 @@
   .compare-side { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; }
   .compare-side-title { font-size: 13px; font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 8px; }
 
-  .position-badge { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 600; }
+  .position-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 36px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 600; padding: 0 4px; }
   .pos-1-3 { background: var(--green-light); color: var(--green); }
   .pos-4-10 { background: var(--accent-light); color: var(--accent); }
   .pos-11-20 { background: var(--amber-light); color: var(--amber); }
   .pos-20plus { background: var(--red-light); color: var(--red); }
+
+  /* SEO Intelligence panels */
+  .intel-section { margin-bottom: 1.5rem; }
+  .intel-header { display: flex; align-items: center; gap: 10px; padding: 14px 18px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg) var(--radius-lg) 0 0; border-bottom: none; cursor: pointer; }
+  .intel-header:hover { background: var(--surface2); }
+  .intel-icon { font-size: 20px; }
+  .intel-title { font-size: 14px; font-weight: 600; flex: 1; }
+  .intel-subtitle { font-size: 12px; color: var(--text3); }
+  .intel-count { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; }
+  .intel-body { background: var(--surface); border: 1px solid var(--border); border-radius: 0 0 var(--radius-lg) var(--radius-lg); padding: 0 1.5rem; overflow: hidden; transition: max-height 0.3s ease; }
+  .intel-body.collapsed { max-height: 0; padding: 0 1.5rem; }
+  .intel-body.expanded { max-height: 2000px; padding: 1rem 1.5rem; }
+  .intel-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .intel-row:last-child { border-bottom: none; }
+  .intel-row-main { flex: 1; min-width: 0; }
+  .intel-row-query { font-weight: 500; color: var(--text); margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .intel-row-detail { font-size: 11px; color: var(--text3); }
+  .intel-row-metrics { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+  /* Report panel */
+  .report-panel { background: var(--surface2); border-radius: var(--radius); padding: 1.25rem; margin-top: 1rem; font-size: 13px; line-height: 1.8; color: var(--text2); white-space: pre-wrap; }
+  .report-generating { text-align: center; padding: 2rem; color: var(--text3); }
+  .report-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid var(--border); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
 
   .trends-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; }
   .trends-legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text2); cursor: pointer; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); transition: all 0.15s; }
@@ -121,6 +157,11 @@
   .error-box { background: var(--red-light); border: 1px solid #fca5a5; border-radius: var(--radius); padding: 1rem 1.25rem; color: var(--red); font-size: 13px; margin-bottom: 1rem; }
   .info-box { background: var(--accent-light); border: 1px solid #93c5fd; border-radius: var(--radius); padding: 1rem 1.25rem; color: #1e40af; font-size: 13px; margin-bottom: 1rem; }
   .warn-box { background: var(--amber-light); border: 1px solid #fcd34d; border-radius: var(--radius); padding: 1rem 1.25rem; color: var(--amber); font-size: 13px; margin-bottom: 1rem; }
+  .success-box { background: var(--green-light); border: 1px solid #86efac; border-radius: var(--radius); padding: 1rem 1.25rem; color: var(--green); font-size: 13px; margin-bottom: 1rem; }
+
+  .opportunity-score { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 22px; border-radius: 5px; font-size: 11px; font-weight: 700; background: var(--amber-light); color: var(--amber); }
+  .opportunity-high { background: var(--green-light); color: var(--green); }
+  .opportunity-med { background: var(--amber-light); color: var(--amber); }
 
   @media (max-width: 700px) {
     .grid-2, .grid-3, .compare-panel { grid-template-columns: 1fr; }
@@ -133,25 +174,15 @@
 <div id="auth-screen">
   <div class="auth-card">
     <div class="auth-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#1a6ef5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="#1a6ef5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     </div>
     <h1>A Place in the Sun</h1>
-    <p class="subtitle">Analytics, SEO &amp; App Dashboard</p>
+    <p class="subtitle">Analytics, SEO Intelligence &amp; App Dashboard</p>
     <div class="auth-features">
-      <span>📊 GA4 Web</span>
-      <span>📱 App Analytics</span>
-      <span>🔍 Search Console</span>
-      <span>📈 Trends</span>
+      <span>📊 GA4</span><span>📱 App</span><span>🔍 Search Console</span><span>🧠 SEO Intelligence</span><span>📝 AI Reports</span>
     </div>
     <button class="sign-in-btn" onclick="startAuth()">
-      <svg width="20" height="20" viewBox="0 0 24 24">
-        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-      </svg>
+      <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Sign in with Google
     </button>
     <p class="auth-note">Signs in with Google to access your analytics data.<br>Read-only access. Your data never leaves your browser.</p>
@@ -183,11 +214,13 @@
     <div class="tab" onclick="showTab('app')" id="tab-app">📱 App</div>
     <div class="tab" onclick="showTab('traffic')" id="tab-traffic">Traffic</div>
     <div class="tab" onclick="showTab('seo')" id="tab-seo">SEO &amp; Search Console</div>
+    <div class="tab" onclick="showTab('intelligence')" id="tab-intelligence">🧠 SEO Intelligence</div>
     <div class="tab" onclick="showTab('trends')" id="tab-trends">Google Trends</div>
     <div class="tab" onclick="showTab('events')" id="tab-events">Events</div>
     <div class="tab" onclick="showTab('geo')" id="tab-geo">Geography</div>
   </div>
 
+  <!-- OVERVIEW -->
   <div id="pane-overview">
     <div class="metric-grid" id="overview-metrics"></div>
     <div class="grid-2">
@@ -201,6 +234,7 @@
     </div>
   </div>
 
+  <!-- APP -->
   <div id="pane-app" style="display:none">
     <div class="warn-box">⚠️ <strong>iOS data note:</strong> The APITS-IOS stream has not received data recently. App stats currently reflect Android only. Ask your developer to check the iOS Firebase connection.</div>
     <div class="metric-grid" id="app-metrics"></div>
@@ -220,11 +254,13 @@
     <div class="card"><div class="card-title">App — geography</div><div id="app-geo-list"></div></div>
   </div>
 
+  <!-- TRAFFIC -->
   <div id="pane-traffic" style="display:none">
     <div class="card"><div class="card-title">UK vs international</div><div class="metric-grid" id="uk-metrics" style="margin-bottom:1rem"></div><div class="chart-wrap" style="height:200px"><canvas id="uk-chart"></canvas></div></div>
     <div class="card"><div class="card-title">Traffic by source</div><div id="source-list"></div></div>
   </div>
 
+  <!-- SEO -->
   <div id="pane-seo" style="display:none">
     <div class="metric-grid" id="seo-metrics"></div>
     <div class="card"><div class="card-title">Clicks &amp; impressions over time</div><div class="chart-wrap" style="height:220px"><canvas id="gsc-trend-chart"></canvas></div></div>
@@ -235,6 +271,94 @@
     <div class="card"><div class="card-title">Position changes to watch</div><div id="gsc-positions-list"></div></div>
   </div>
 
+  <!-- SEO INTELLIGENCE -->
+  <div id="pane-intelligence" style="display:none">
+    <div class="alert alert-purple" style="margin-bottom:1.5rem">
+      <span class="alert-icon">🧠</span>
+      <div>
+        <div class="alert-title">SEO Intelligence — powered by your live Search Console data</div>
+        <div class="alert-desc">These tools analyse your real GSC data to surface actionable opportunities. Click each section to expand.</div>
+      </div>
+    </div>
+
+    <!-- Weekly Report -->
+    <div class="card" style="margin-bottom:1rem">
+      <div class="card-header">
+        <div>
+          <div class="card-title">📝 Weekly SEO Report Writer</div>
+          <div style="font-size:12px;color:var(--text3);">AI-generated summary of your week — ready to share with your team</div>
+        </div>
+        <button class="btn btn-purple" onclick="generateReport()" id="report-btn">✨ Generate Report</button>
+      </div>
+      <div id="report-output"></div>
+    </div>
+
+    <!-- Striking Distance -->
+    <div class="intel-section">
+      <div class="intel-header" onclick="toggleIntel('striking')">
+        <span class="intel-icon">🎯</span>
+        <div style="flex:1">
+          <div class="intel-title">Striking Distance Decoder</div>
+          <div style="font-size:12px;color:var(--text3);">Keywords in positions 11-20 — one push from page one</div>
+        </div>
+        <span class="intel-count badge badge-amber" id="striking-count">–</span>
+        <span style="color:var(--text3);font-size:12px;margin-left:8px;" id="striking-arrow">▼</span>
+      </div>
+      <div class="intel-body expanded" id="intel-striking">
+        <div id="striking-list"><div style="color:var(--text3);font-size:13px;padding:1rem 0;">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Decay Scanner -->
+    <div class="intel-section">
+      <div class="intel-header" onclick="toggleIntel('decay')">
+        <span class="intel-icon">📉</span>
+        <div style="flex:1">
+          <div class="intel-title">Decay Scanner</div>
+          <div style="font-size:12px;color:var(--text3);">Pages with clicks down 20%+ from their recent peak</div>
+        </div>
+        <span class="intel-count badge badge-red" id="decay-count">–</span>
+        <span style="color:var(--text3);font-size:12px;margin-left:8px;" id="decay-arrow">▼</span>
+      </div>
+      <div class="intel-body expanded" id="intel-decay">
+        <div id="decay-list"><div style="color:var(--text3);font-size:13px;padding:1rem 0;">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Cannibalization Finder -->
+    <div class="intel-section">
+      <div class="intel-header" onclick="toggleIntel('cannibal')">
+        <span class="intel-icon">⚔️</span>
+        <div style="flex:1">
+          <div class="intel-title">Cannibalization Finder</div>
+          <div style="font-size:12px;color:var(--text3);">Queries where multiple pages compete for the same keyword</div>
+        </div>
+        <span class="intel-count badge badge-red" id="cannibal-count">–</span>
+        <span style="color:var(--text3);font-size:12px;margin-left:8px;" id="cannibal-arrow">▼</span>
+      </div>
+      <div class="intel-body expanded" id="intel-cannibal">
+        <div id="cannibal-list"><div style="color:var(--text3);font-size:13px;padding:1rem 0;">Loading...</div></div>
+      </div>
+    </div>
+
+    <!-- Ranking Anomaly Alerts -->
+    <div class="intel-section">
+      <div class="intel-header" onclick="toggleIntel('anomaly')">
+        <span class="intel-icon">🔔</span>
+        <div style="flex:1">
+          <div class="intel-title">Ranking Anomaly Alerts</div>
+          <div style="font-size:12px;color:var(--text3);">Significant position spikes or drops vs previous period</div>
+        </div>
+        <span class="intel-count badge badge-amber" id="anomaly-count">–</span>
+        <span style="color:var(--text3);font-size:12px;margin-left:8px;" id="anomaly-arrow">▼</span>
+      </div>
+      <div class="intel-body expanded" id="intel-anomaly">
+        <div id="anomaly-list"><div style="color:var(--text3);font-size:13px;padding:1rem 0;">Loading...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRENDS -->
   <div id="pane-trends" style="display:none">
     <div class="info-box" id="trends-status"></div>
     <div class="card">
@@ -247,11 +371,13 @@
     <div class="card"><div class="card-title">Current interest by destination</div><div id="trends-summary"></div></div>
   </div>
 
+  <!-- EVENTS -->
   <div id="pane-events" style="display:none">
     <div class="alert alert-amber" style="margin-bottom:1rem"><span class="alert-icon">⚠</span><div><div class="alert-title">Event health monitoring</div><div class="alert-desc">generate_lead is your critical conversion event. Red dot = zero events. Compare current vs previous period to catch silent failures.</div></div></div>
     <div class="card"><div class="card-title">Website events — current vs previous period</div><div id="events-list"></div></div>
   </div>
 
+  <!-- GEO -->
   <div id="pane-geo" style="display:none">
     <div class="alert alert-amber" style="margin-bottom:1rem"><span class="alert-icon">🔒</span><div><div class="alert-title">Bot &amp; spam traffic watch</div><div class="alert-desc">Countries outside your normal profile are flagged. High volumes from unexpected sources highlighted in red.</div></div></div>
     <div class="card"><div class="card-title">Website traffic by country</div><div id="country-list"></div></div>
@@ -261,13 +387,11 @@
 </div>
 
 <script>
-// ---- CONFIG ----
 const CLIENT_ID = '528780354491-24amds434k7okpoog43di3odvgs0e6id.apps.googleusercontent.com';
 const WEB_PROPERTY_ID = '316098717';
 const APP_PROPERTY_ID = '520241296';
 const GSC_SITE = 'https://www.aplaceinthesun.com/';
 const SCOPES = 'https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/webmasters.readonly';
-
 const KNOWN_COUNTRIES = ['United Kingdom','Ireland','United States','Germany','France','Netherlands','Spain','Italy','Australia','Canada','New Zealand','Belgium','Sweden','Denmark','Norway','Switzerland'];
 const FLAGS = {'United Kingdom':'🇬🇧','Ireland':'🇮🇪','United States':'🇺🇸','Germany':'🇩🇪','France':'🇫🇷','Netherlands':'🇳🇱','Spain':'🇪🇸','Italy':'🇮🇹','Australia':'🇦🇺','Canada':'🇨🇦','New Zealand':'🇳🇿','China':'🇨🇳','Singapore':'🇸🇬','Japan':'🇯🇵','India':'🇮🇳','Hong Kong':'🇭🇰','Russia':'🇷🇺','Brazil':'🇧🇷','Ukraine':'🇺🇦','Belgium':'🇧🇪','Sweden':'🇸🇪','Denmark':'🇩🇰','Norway':'🇳🇴','Switzerland':'🇨🇭','South Korea':'🇰🇷'};
 const TREND_COLORS = ['#1a6ef5','#2d7a3a','#c0392b','#d97706','#6d28d9','#0891b2','#be185d'];
@@ -278,9 +402,10 @@ let currentPeriod = 28;
 let charts = {};
 let trendsCountry = 'GB';
 let activeTerms = new Set([0,1,2,3,4,5,6]);
+let gscDataCache = {}; // cache for intelligence tab
+let intelPanels = {striking:true, decay:true, cannibal:true, anomaly:true};
 
-// ---- AUTH ----
-// Uses PKCE flow which works on GitHub Pages without redirect URI issues
+// AUTH
 function startAuth() {
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
@@ -300,7 +425,6 @@ function signOut() {
   document.getElementById('auth-screen').style.display = 'block';
 }
 
-// Check for token in URL on page load
 (function checkAuth() {
   const hash = window.location.hash.substring(1);
   if (!hash) return;
@@ -308,7 +432,6 @@ function signOut() {
   const token = params.get('access_token');
   if (token) {
     accessToken = token;
-    // Clean URL without losing the page
     history.replaceState(null, '', window.location.pathname);
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
@@ -317,22 +440,32 @@ function signOut() {
   }
 })();
 
-// ---- HELPERS ----
 function changePeriod(v) {
   currentPeriod = parseInt(v);
   const l = {'7':'Last 7 days','28':'Last 28 days','90':'Last 90 days'};
   document.getElementById('period-label').textContent = l[v] + ' — web & app combined';
+  gscDataCache = {};
   loadAll();
 }
 
 function showTab(name) {
-  ['overview','app','traffic','seo','trends','events','geo'].forEach(t => {
+  ['overview','app','traffic','seo','intelligence','trends','events','geo'].forEach(t => {
     document.getElementById('pane-'+t).style.display = t===name ? 'block' : 'none';
     document.getElementById('tab-'+t).className = 'tab' + (t===name ? ' active' : '');
   });
   if (name === 'trends') loadTrends();
+  if (name === 'intelligence' && gscDataCache.queries) renderIntelligence();
 }
 
+function toggleIntel(panel) {
+  intelPanels[panel] = !intelPanels[panel];
+  const body = document.getElementById('intel-'+panel);
+  const arrow = document.getElementById(panel+'-arrow');
+  body.className = 'intel-body ' + (intelPanels[panel] ? 'expanded' : 'collapsed');
+  arrow.textContent = intelPanels[panel] ? '▼' : '▶';
+}
+
+// API helpers
 async function apiFetch(url, body) {
   const opts = { headers: { 'Authorization': 'Bearer ' + accessToken, 'Content-Type': 'application/json' } };
   if (body) { opts.method = 'POST'; opts.body = JSON.stringify(body); }
@@ -349,26 +482,26 @@ async function gscRequest(body) {
   return apiFetch(`https://www.googleapis.com/webmasters/v3/sites/${encodeURIComponent(GSC_SITE)}/searchAnalytics/query`, body);
 }
 
-function dr(days, offset=0) {
-  const e = new Date(); e.setDate(e.getDate()-offset);
-  const s = new Date(e); s.setDate(s.getDate()-days+1);
-  const f = d => d.toISOString().slice(0,10);
-  return {startDate:f(s), endDate:f(e)};
+function gadr(days, offset=0) {
+  const e=new Date(); e.setDate(e.getDate()-offset);
+  const s=new Date(e); s.setDate(s.getDate()-days+1);
+  const f=d=>d.toISOString().slice(0,10);
+  return {startDate:f(s),endDate:f(e)};
 }
 
-function gdr(days, offset=0) {
-  const e = new Date(); e.setDate(e.getDate()-offset-3);
-  const s = new Date(e); s.setDate(s.getDate()-days+1);
-  const f = d => d.toISOString().slice(0,10);
-  return {startDate:f(s), endDate:f(e)};
+function gscdr(days, offset=0) {
+  const e=new Date(); e.setDate(e.getDate()-offset-3);
+  const s=new Date(e); s.setDate(s.getDate()-days+1);
+  const f=d=>d.toISOString().slice(0,10);
+  return {startDate:f(s),endDate:f(e)};
 }
 
 function parseRows(data) {
   if (!data.rows) return [];
   return data.rows.map(row => {
     const obj = {};
-    (data.dimensionHeaders||[]).forEach((h,i) => obj[h.name] = row.dimensionValues[i].value);
-    (data.metricHeaders||[]).forEach((h,i) => obj[h.name] = parseFloat(row.metricValues[i].value)||0);
+    (data.dimensionHeaders||[]).forEach((h,i)=>obj[h.name]=row.dimensionValues[i].value);
+    (data.metricHeaders||[]).forEach((h,i)=>obj[h.name]=parseFloat(row.metricValues[i].value)||0);
     return obj;
   });
 }
@@ -377,20 +510,25 @@ function dc(id) { if(charts[id]){charts[id].destroy();delete charts[id];} }
 function fmt(n) { if(n>=1e6)return(n/1e6).toFixed(1)+'M'; if(n>=1000)return(n/1000).toFixed(1)+'k'; return Math.round(n)+''; }
 function pct(a,b) { return b>0?((a/b-1)*100).toFixed(1):'0'; }
 function posBadge(p) { p=Math.round(p); const c=p<=3?'pos-1-3':p<=10?'pos-4-10':p<=20?'pos-11-20':'pos-20plus'; return `<span class="position-badge ${c}">#${p}</span>`; }
+function truncate(s,n) { return s.length>n?s.slice(0,n)+'…':s; }
 
-// ---- LOAD ALL ----
+// LOAD ALL
 async function loadAll() {
   document.getElementById('loading-pane').style.display = 'block';
   document.getElementById('error-section').innerHTML = '';
   document.getElementById('alerts-section').innerHTML = '';
 
   try {
-    const d1=dr(currentPeriod), d2=dr(currentPeriod,currentPeriod);
-    const g1=gdr(currentPeriod), g2=gdr(currentPeriod,currentPeriod);
+    const d1=gadr(currentPeriod), d2=gadr(currentPeriod,currentPeriod);
+    const g1=gscdr(currentPeriod), g2=gscdr(currentPeriod,currentPeriod);
+    // Extended GSC data for intelligence — more queries, with page dimension, daily with page
+    const g1Long = gscdr(90); // 90 days for decay detection
 
     const [wo,wop,wd,wch,wdv,we,wep,wc,wcp,
            ao,aop,ad,ae,aos,ag,aen,
-           go,gop,gd,gq,gqp,gp] = await Promise.all([
+           go,gop,gd,gq,gqp,gp,
+           gqFull,gqpFull,gqPage,gqPagePrev,gDecay] = await Promise.all([
+      // Web GA4
       gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],metrics:[{name:'sessions'},{name:'activeUsers'},{name:'bounceRate'},{name:'averageSessionDuration'}]}),
       gaRequest(WEB_PROPERTY_ID,{dateRanges:[d2],metrics:[{name:'sessions'},{name:'activeUsers'}]}),
       gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
@@ -400,6 +538,7 @@ async function loadAll() {
       gaRequest(WEB_PROPERTY_ID,{dateRanges:[d2],dimensions:[{name:'eventName'}],metrics:[{name:'eventCount'}],limit:25}),
       gaRequest(WEB_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:25}),
       gaRequest(WEB_PROPERTY_ID,{dateRanges:[d2],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],limit:25}),
+      // App GA4
       gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],metrics:[{name:'sessions'},{name:'activeUsers'},{name:'averageSessionDuration'},{name:'screenPageViews'}]}),
       gaRequest(APP_PROPERTY_ID,{dateRanges:[d2],metrics:[{name:'sessions'},{name:'activeUsers'}]}),
       gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'date'}],metrics:[{name:'sessions'},{name:'activeUsers'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
@@ -407,16 +546,36 @@ async function loadAll() {
       gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'operatingSystem'}],metrics:[{name:'activeUsers'}],orderBys:[{metric:{metricName:'activeUsers'},desc:true}]}),
       gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],dimensions:[{name:'country'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:15}),
       gaRequest(APP_PROPERTY_ID,{dateRanges:[d1],metrics:[{name:'userEngagementDuration'},{name:'engagedSessions'},{name:'newUsers'},{name:'dauPerMau'}]}),
+      // GSC standard
       gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:[],rowLimit:1}),
       gscRequest({startDate:g2.startDate,endDate:g2.endDate,dimensions:[],rowLimit:1}),
       gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['date'],rowLimit:90}),
       gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['query'],rowLimit:20}),
       gscRequest({startDate:g2.startDate,endDate:g2.endDate,dimensions:['query'],rowLimit:20}),
-      gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['page'],rowLimit:15})
+      gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['page'],rowLimit:15}),
+      // GSC extended for intelligence
+      gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['query'],rowLimit:200}),
+      gscRequest({startDate:g2.startDate,endDate:g2.endDate,dimensions:['query'],rowLimit:200}),
+      gscRequest({startDate:g1.startDate,endDate:g1.endDate,dimensions:['query','page'],rowLimit:500}),
+      gscRequest({startDate:g2.startDate,endDate:g2.endDate,dimensions:['query','page'],rowLimit:500}),
+      gscRequest({startDate:g1Long.startDate,endDate:g1Long.endDate,dimensions:['date','page'],rowLimit:500})
     ]);
 
+    // Cache GSC data for intelligence tab
+    gscDataCache = {
+      queries: gqFull,
+      queriesPrev: gqpFull,
+      queryPage: gqPage,
+      queryPagePrev: gqPagePrev,
+      decayData: gDecay,
+      overview: go,
+      overviewPrev: gop,
+      daily: gd
+    };
+
     document.getElementById('loading-pane').style.display = 'none';
-    renderAlerts(we,wep,wc,wcp,go,gop,ao,aop);
+
+    renderAlerts(we,wep,wc,wcp,go,gop,ao,aop,gqFull,gqpFull);
     renderOverview(wo,wop,wd,wch,wdv,go,gd,gq);
     renderApp(ao,aop,ad,ae,aos,ag,aen,wo,wop);
     renderTraffic(wc,wch);
@@ -424,14 +583,325 @@ async function loadAll() {
     renderEvents(we,wep);
     renderGeo(wc,wcp);
 
+    // If intelligence tab is active, render it
+    if (document.getElementById('pane-intelligence').style.display !== 'none') {
+      renderIntelligence();
+    }
+
   } catch(e) {
     document.getElementById('loading-pane').style.display = 'none';
     document.getElementById('error-section').innerHTML = `<div class="error-box"><strong>Error loading data:</strong> ${e.message}<br><small>If this says 401, your session has expired — please sign out and sign in again.</small></div>`;
   }
 }
 
-// ---- RENDER ALERTS ----
-function renderAlerts(ev,evp,co,cop,gc,gcp,ac,acp) {
+// ---- INTELLIGENCE ----
+function renderIntelligence() {
+  if (!gscDataCache.queries) return;
+  renderStrikingDistance();
+  renderDecayScanner();
+  renderCannibalization();
+  renderAnomalyAlerts();
+}
+
+function renderStrikingDistance() {
+  const rows = gscDataCache.queries.rows || [];
+  const prevMap = {};
+  (gscDataCache.queriesPrev.rows||[]).forEach(r => prevMap[r.keys[0]] = r);
+
+  // Positions 11-20, ranked by potential upside (impressions * CTR improvement potential)
+  const striking = rows
+    .filter(r => r.position >= 11 && r.position <= 20 && r.impressions > 10)
+    .map(r => {
+      // Estimated clicks if on page 1 (position ~5 gets ~6% CTR vs pos 11-20 ~1%)
+      const potentialClicks = Math.round(r.impressions * 0.06);
+      const currentClicks = r.clicks;
+      const upside = potentialClicks - currentClicks;
+      const prev = prevMap[r.keys[0]];
+      const posChange = prev ? prev.position - r.position : 0; // positive = improved
+      return { query: r.keys[0], position: r.position, impressions: r.impressions, clicks: r.clicks, upside, posChange, ctr: r.ctr };
+    })
+    .sort((a,b) => b.upside - a.upside)
+    .slice(0,15);
+
+  document.getElementById('striking-count').textContent = striking.length;
+
+  if (!striking.length) {
+    document.getElementById('striking-list').innerHTML = '<div style="color:var(--text3);font-size:13px;padding:1rem 0;">No queries found in positions 11-20 with significant impressions. Try a longer date range.</div>';
+    return;
+  }
+
+  document.getElementById('striking-list').innerHTML = striking.map(r => {
+    const posChangeHtml = r.posChange !== 0 ? `<span class="${r.posChange > 0 ? 'up' : 'down'}" style="font-size:11px;">${r.posChange > 0 ? '▲' : '▼'}${Math.abs(r.posChange).toFixed(1)}</span>` : '';
+    const opportunityClass = r.upside > 100 ? 'opportunity-high' : 'opportunity-med';
+    return `<div class="intel-row">
+      <div class="intel-row-main">
+        <div class="intel-row-query">${truncate(r.query, 60)}</div>
+        <div class="intel-row-detail">${fmt(r.impressions)} impressions · ${r.clicks} clicks · CTR ${(r.ctr*100).toFixed(1)}%</div>
+      </div>
+      <div class="intel-row-metrics">
+        ${posChangeHtml}
+        ${posBadge(r.position)}
+        <span class="opportunity-score ${opportunityClass}" title="Estimated additional clicks if on page 1">+${fmt(r.upside)}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderDecayScanner() {
+  const decayRows = gscDataCache.decayData?.rows || [];
+  if (!decayRows.length) {
+    document.getElementById('decay-list').innerHTML = '<div style="color:var(--text3);font-size:13px;padding:1rem 0;">Not enough historical data for decay analysis. Try the 90-day view.</div>';
+    document.getElementById('decay-count').textContent = '0';
+    return;
+  }
+
+  // Group by page, find peak clicks in 90 days vs recent 28 days
+  const pageData = {};
+  decayRows.forEach(r => {
+    const page = r.keys[1];
+    const date = r.keys[0];
+    if (!pageData[page]) pageData[page] = [];
+    pageData[page].push({ date, clicks: r.clicks });
+  });
+
+  // For each page, find peak 28-day window vs most recent 28 days
+  const now = new Date();
+  const recentCutoff = new Date(now); recentCutoff.setDate(recentCutoff.getDate() - 31);
+
+  const decaying = [];
+  Object.entries(pageData).forEach(([page, days]) => {
+    const sorted = days.sort((a,b) => a.date.localeCompare(b.date));
+    const recent = sorted.filter(d => new Date(d.date) >= recentCutoff);
+    const recentClicks = recent.reduce((s,d) => s+d.clicks, 0);
+    const peakClicks = Math.max(...sorted.map(d => d.clicks)) * 28; // estimate peak 28d
+    const allClicks = sorted.reduce((s,d) => s+d.clicks, 0);
+    // Use total/3 as a proxy for 30-day peak (90-day data / 3 chunks)
+    const avgChunk = allClicks / 3;
+    if (avgChunk > 5 && recentClicks < avgChunk * 0.8) {
+      const drop = Math.round((1 - recentClicks / avgChunk) * 100);
+      const cleanPage = page.replace('https://www.aplaceinthesun.com', '') || '/';
+      decaying.push({ page: cleanPage, recentClicks, peakClicks: Math.round(avgChunk), drop });
+    }
+  });
+
+  decaying.sort((a,b) => b.drop - a.drop);
+  document.getElementById('decay-count').textContent = decaying.length;
+
+  if (!decaying.length) {
+    document.getElementById('decay-list').innerHTML = '<div class="success-box" style="margin:0.5rem 0;">✅ No significant traffic decay detected across your top pages.</div>';
+    return;
+  }
+
+  document.getElementById('decay-list').innerHTML = decaying.slice(0,12).map(r => `
+    <div class="intel-row">
+      <div class="intel-row-main">
+        <div class="intel-row-query" style="font-family:'DM Mono',monospace;font-size:12px;">${truncate(r.page, 55)}</div>
+        <div class="intel-row-detail">Recent: ${fmt(r.recentClicks)} clicks · Peak avg: ${fmt(r.peakClicks)} clicks</div>
+      </div>
+      <div class="intel-row-metrics">
+        <span class="badge badge-red">-${r.drop}%</span>
+      </div>
+    </div>`).join('');
+}
+
+function renderCannibalization() {
+  const rows = gscDataCache.queryPage?.rows || [];
+  if (!rows.length) {
+    document.getElementById('cannibal-list').innerHTML = '<div style="color:var(--text3);font-size:13px;padding:1rem 0;">No query-page data available.</div>';
+    document.getElementById('cannibal-count').textContent = '0';
+    return;
+  }
+
+  // Group by query, find queries where 2+ different pages rank
+  const queryPages = {};
+  rows.forEach(r => {
+    const query = r.keys[0];
+    const page = r.keys[1].replace('https://www.aplaceinthesun.com', '') || '/';
+    if (!queryPages[query]) queryPages[query] = [];
+    queryPages[query].push({ page, clicks: r.clicks, impressions: r.impressions, position: r.position, ctr: r.ctr });
+  });
+
+  const cannibalized = Object.entries(queryPages)
+    .filter(([q, pages]) => pages.length >= 2 && pages.reduce((s,p)=>s+p.impressions,0) > 20)
+    .map(([query, pages]) => ({
+      query,
+      pages: pages.sort((a,b) => a.position - b.position),
+      totalImpressions: pages.reduce((s,p)=>s+p.impressions,0),
+      totalClicks: pages.reduce((s,p)=>s+p.clicks,0)
+    }))
+    .sort((a,b) => b.totalImpressions - a.totalImpressions)
+    .slice(0,12);
+
+  document.getElementById('cannibal-count').textContent = cannibalized.length;
+
+  if (!cannibalized.length) {
+    document.getElementById('cannibal-list').innerHTML = '<div class="success-box" style="margin:0.5rem 0;">✅ No significant cannibalization detected in your top queries.</div>';
+    return;
+  }
+
+  document.getElementById('cannibal-list').innerHTML = cannibalized.map(r => `
+    <div class="intel-row" style="flex-direction:column;align-items:flex-start;gap:6px;">
+      <div style="display:flex;align-items:center;gap:10px;width:100%;">
+        <span style="flex:1;font-weight:500;font-size:13px;">${truncate(r.query,60)}</span>
+        <span class="badge badge-red">${r.pages.length} pages competing</span>
+        <span style="font-size:11px;color:var(--text3);">${fmt(r.totalImpressions)} impressions</span>
+      </div>
+      <div style="width:100%;padding-left:4px;">
+        ${r.pages.map(p=>`<div style="display:flex;align-items:center;gap:8px;padding:3px 0;font-size:12px;color:var(--text2);">
+          ${posBadge(p.position)}
+          <span style="font-family:'DM Mono',monospace;font-size:11px;flex:1;">${truncate(p.page,50)}</span>
+          <span style="color:var(--text3);">${fmt(p.clicks)} clicks</span>
+        </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderAnomalyAlerts() {
+  const rows = gscDataCache.queries?.rows || [];
+  const prevRows = gscDataCache.queriesPrev?.rows || [];
+  const prevMap = {};
+  prevRows.forEach(r => prevMap[r.keys[0]] = r);
+
+  const anomalies = [];
+  rows.forEach(r => {
+    const prev = prevMap[r.keys[0]];
+    if (!prev) return;
+    const posChange = prev.position - r.position; // positive = improved
+    const clickChange = prev.clicks > 0 ? ((r.clicks - prev.clicks) / prev.clicks * 100) : 0;
+    // Flag big position swings (>5 places) OR big click swings (>40%)
+    if (Math.abs(posChange) >= 5 || Math.abs(clickChange) >= 40) {
+      anomalies.push({
+        query: r.keys[0],
+        position: r.position,
+        prevPosition: prev.position,
+        posChange,
+        clicks: r.clicks,
+        prevClicks: prev.clicks,
+        clickChange,
+        impressions: r.impressions
+      });
+    }
+  });
+
+  anomalies.sort((a,b) => Math.abs(b.posChange) - Math.abs(a.posChange));
+  document.getElementById('anomaly-count').textContent = anomalies.length;
+
+  if (!anomalies.length) {
+    document.getElementById('anomaly-list').innerHTML = '<div class="success-box" style="margin:0.5rem 0;">✅ No significant ranking anomalies detected this period.</div>';
+    return;
+  }
+
+  document.getElementById('anomaly-list').innerHTML = anomalies.slice(0,15).map(r => {
+    const posUp = r.posChange > 0;
+    const clicksUp = r.clickChange > 0;
+    return `<div class="intel-row">
+      <div class="intel-row-main">
+        <div class="intel-row-query">${truncate(r.query,60)}</div>
+        <div class="intel-row-detail">
+          Position: #${r.prevPosition.toFixed(0)} → #${r.position.toFixed(0)} &nbsp;|&nbsp;
+          Clicks: ${fmt(r.prevClicks)} → ${fmt(r.clicks)} &nbsp;|&nbsp;
+          ${fmt(r.impressions)} impressions
+        </div>
+      </div>
+      <div class="intel-row-metrics">
+        <span class="${posUp?'up':'down'}" style="font-size:12px;min-width:60px;text-align:right;">${posUp?'▲':'▼'} ${Math.abs(r.posChange).toFixed(1)} pos</span>
+        <span class="${clicksUp?'up':'down'}" style="font-size:12px;min-width:50px;text-align:right;">${clicksUp?'+':''}${r.clickChange.toFixed(0)}% clicks</span>
+        <span class="badge ${posUp?'badge-green':'badge-red'}">${posUp?'📈 Rising':'📉 Dropping'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ---- WEEKLY REPORT ----
+async function generateReport() {
+  if (!gscDataCache.queries) { alert('Please wait for data to load first.'); return; }
+  const btn = document.getElementById('report-btn');
+  btn.disabled = true;
+  btn.textContent = 'Generating...';
+  document.getElementById('report-output').innerHTML = `<div class="report-generating"><span class="report-spinner"></span>Claude is writing your weekly SEO report...</div>`;
+
+  try {
+    const gscRows = gscDataCache.queries.rows || [];
+    const gscPrevRows = gscDataCache.queriesPrev.rows || [];
+    const prevMap = {};
+    gscPrevRows.forEach(r => prevMap[r.keys[0]] = r);
+
+    const overview = gscDataCache.overview?.rows?.[0] || {};
+    const overviewPrev = gscDataCache.overviewPrev?.rows?.[0] || {};
+
+    const topQueries = gscRows.slice(0,10).map(r => {
+      const prev = prevMap[r.keys[0]];
+      return `"${r.keys[0]}" — pos #${r.position.toFixed(1)}, ${r.clicks} clicks, ${r.impressions} impressions${prev ? ` (prev pos #${prev.position.toFixed(1)}, ${prev.clicks} clicks)` : ''}`;
+    }).join('\n');
+
+    const striking = gscRows.filter(r=>r.position>=11&&r.position<=20&&r.impressions>10).slice(0,5).map(r=>`"${r.keys[0]}" at #${r.position.toFixed(1)} (${r.impressions} impr)`).join(', ');
+
+    const anomalies = gscRows.filter(r=>{const p=prevMap[r.keys[0]];return p&&Math.abs(p.position-r.position)>=5;}).slice(0,5).map(r=>{const p=prevMap[r.keys[0]];return`"${r.keys[0]}" moved from #${p.position.toFixed(1)} to #${r.position.toFixed(1)}`;}).join(', ');
+
+    const prompt = `You are an SEO analyst for A Place in the Sun (aplaceinthesun.com), a UK-based overseas property portal. Write a concise, professional weekly SEO performance report based on this data.
+
+PERIOD: Last ${currentPeriod} days vs previous ${currentPeriod} days
+
+SEARCH CONSOLE OVERVIEW:
+- Clicks: ${fmt(overview.clicks||0)} (prev: ${fmt(overviewPrev.clicks||0)})
+- Impressions: ${fmt(overview.impressions||0)} (prev: ${fmt(overviewPrev.impressions||0)})
+- Average position: ${(overview.position||0).toFixed(1)} (prev: ${(overviewPrev.position||0).toFixed(1)})
+- CTR: ${((overview.ctr||0)*100).toFixed(1)}% (prev: ${((overviewPrev.ctr||0)*100).toFixed(1)}%)
+
+TOP 10 QUERIES:
+${topQueries}
+
+STRIKING DISTANCE OPPORTUNITIES (pos 11-20):
+${striking || 'None identified'}
+
+RANKING ANOMALIES:
+${anomalies || 'No significant changes'}
+
+Write a report with these sections:
+1. Summary (2-3 sentences, overall performance)
+2. Key Wins (what improved)
+3. Concerns (what needs attention)
+4. Top Opportunities (striking distance keywords to target)
+5. Recommended Actions (3 specific, actionable tasks for next week)
+
+Keep it punchy, professional, and actionable. Suitable for sharing with a marketing team. Use plain text, no markdown symbols.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] })
+    });
+
+    const data = await response.json();
+    const reportText = data.content?.[0]?.text || 'Could not generate report.';
+
+    const today = new Date().toLocaleDateString('en-GB', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+    document.getElementById('report-output').innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:8px;">
+        <div style="font-size:12px;color:var(--text3);">Generated ${today}</div>
+        <button class="btn" onclick="copyReport()">📋 Copy to clipboard</button>
+      </div>
+      <div class="report-panel" id="report-text">${reportText}</div>`;
+
+  } catch(e) {
+    document.getElementById('report-output').innerHTML = `<div class="error-box">Could not generate report: ${e.message}</div>`;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '✨ Generate Report';
+}
+
+function copyReport() {
+  const text = document.getElementById('report-text')?.textContent || '';
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Copied!';
+    setTimeout(() => btn.textContent = '📋 Copy to clipboard', 2000);
+  });
+}
+
+// ---- ALERTS ----
+function renderAlerts(ev,evp,co,cop,gc,gcp,ac,acp,gqFull,gqpFull) {
   const alerts = [];
   const evR=parseRows(ev), pm={};
   parseRows(evp).forEach(r=>pm[r.eventName]=r.eventCount);
@@ -439,25 +909,33 @@ function renderAlerts(ev,evp,co,cop,gc,gcp,ac,acp) {
   if (!gl||gl.eventCount===0) alerts.push({t:'red',i:'⚠',ti:'generate_lead has dropped to ZERO',de:`No lead events in the last ${currentPeriod} days. Previously ${Math.round(glp)} events. Check your form tracking immediately.`});
   else if (glp>0&&gl.eventCount<glp*0.5) alerts.push({t:'amber',i:'▼',ti:`generate_lead down ${Math.round((1-gl.eventCount/glp)*100)}% vs previous period`,de:`Was ${Math.round(glp)}, now ${Math.round(gl.eventCount)} events.`});
   else alerts.push({t:'green',i:'✓',ti:`generate_lead firing normally — ${Math.round(gl.eventCount)} events`,de:`${gl.eventCount>=glp?'+':''}${pct(gl.eventCount,glp)}% vs previous period.`});
+
   const cc=gc.rows?.[0]?.clicks||0, pc=gcp.rows?.[0]?.clicks||1;
-  if (pc>0&&cc<pc*0.7) alerts.push({t:'amber',i:'🔍',ti:`Search Console clicks down ${Math.round((1-cc/pc)*100)}% vs previous period`,de:`Was ${fmt(pc)}, now ${fmt(cc)}. Check SEO tab.`});
+  if (pc>0&&cc<pc*0.7) alerts.push({t:'amber',i:'🔍',ti:`Search Console clicks down ${Math.round((1-cc/pc)*100)}% vs previous period`,de:`Was ${fmt(pc)}, now ${fmt(cc)}. Check SEO Intelligence tab.`});
+
+  // Striking distance count alert
+  const striking = (gqFull.rows||[]).filter(r=>r.position>=11&&r.position<=20&&r.impressions>20);
+  if (striking.length>0) alerts.push({t:'blue',i:'🎯',ti:`${striking.length} keywords in striking distance (positions 11-20)`,de:`These queries are close to page one. Check SEO Intelligence tab for opportunities.`});
+
   const as2=ac.rows?.[0]?.metricValues?.[0]?.value||0, aps=acp.rows?.[0]?.metricValues?.[0]?.value||1;
   if (aps>0&&as2<aps*0.5) alerts.push({t:'amber',i:'📱',ti:`App sessions down ${Math.round((1-as2/aps)*100)}% vs previous period`,de:'App engagement has dropped significantly.'});
+
   const cR=parseRows(co), su=cR.filter(r=>!KNOWN_COUNTRIES.includes(r.country)&&r.sessions>30);
   if (su.length>0) alerts.push({t:'amber',i:'🔒',ti:`Unusual traffic from ${su.length} unexpected ${su.length===1?'country':'countries'}`,de:su.slice(0,4).map(r=>`${r.country} (${Math.round(r.sessions)})`).join(', ')+'. Check Geography tab.'});
+
   document.getElementById('alerts-section').innerHTML=alerts.map(a=>`<div class="alert alert-${a.t}"><span class="alert-icon">${a.i}</span><div><div class="alert-title">${a.ti}</div><div class="alert-desc">${a.de}</div></div></div>`).join('');
 }
 
-// ---- RENDER OVERVIEW ----
+// ---- OVERVIEW ----
 function renderOverview(ov,ovp,daily,ch,dv,go,gd,gq) {
   const m=ov.rows?.[0]?.metricValues||[], mp=ovp.rows?.[0]?.metricValues||[];
   const s=parseFloat(m[0]?.value||0), u=parseFloat(m[1]?.value||0);
   const sp=parseFloat(mp[0]?.value||1), up=parseFloat(mp[1]?.value||1);
-  const gc=go.rows?.[0]?.clicks||0, gi=go.rows?.[0]?.impressions||0, gp=go.rows?.[0]?.position||0, gct=(go.rows?.[0]?.ctr||0)*100;
+  const gc2=go.rows?.[0]?.clicks||0, gi=go.rows?.[0]?.impressions||0, gp=go.rows?.[0]?.position||0, gct=(go.rows?.[0]?.ctr||0)*100;
   document.getElementById('overview-metrics').innerHTML=[
     {l:'Web Sessions',v:fmt(s),d:`${s>=sp?'+':''}${pct(s,sp)}% vs prev`,u:s>=sp},
     {l:'Web Users',v:fmt(u),d:`${u>=up?'+':''}${pct(u,up)}% vs prev`,u:u>=up},
-    {l:'GSC Clicks',v:fmt(gc)},{l:'Impressions',v:fmt(gi)},{l:'Avg Position',v:gp.toFixed(1)},{l:'CTR',v:gct.toFixed(1)+'%'}
+    {l:'GSC Clicks',v:fmt(gc2)},{l:'Impressions',v:fmt(gi)},{l:'Avg Position',v:gp.toFixed(1)},{l:'CTR',v:gct.toFixed(1)+'%'}
   ].map(x=>`<div class="metric"><div class="metric-label">${x.l}</div><div class="metric-value">${x.v}</div>${x.d?`<div class="metric-delta ${x.u?'up':'down'}">${x.d}</div>`:''}</div>`).join('');
 
   const dr2=parseRows(daily);
@@ -478,7 +956,7 @@ function renderOverview(ov,ovp,daily,ch,dv,go,gd,gq) {
   charts['device-chart']=new Chart(document.getElementById('device-chart'),{type:'doughnut',data:{labels:dvR.map(r=>r.deviceCategory),datasets:[{data:dvR.map(r=>Math.round(r.sessions)),backgroundColor:dvR.map(r=>dvC[r.deviceCategory]||'#999'),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,position:'right',labels:{font:{size:11},boxWidth:10,padding:8}}}}});
 }
 
-// ---- RENDER APP ----
+// ---- APP ----
 function renderApp(ac,acp,ad2,ae,aos,ag,aen,wc,wcp) {
   const am=ac.rows?.[0]?.metricValues||[], amp=acp.rows?.[0]?.metricValues||[];
   const aS=parseFloat(am[0]?.value||0), aU=parseFloat(am[1]?.value||0), aDur=parseFloat(am[2]?.value||0), aV=parseFloat(am[3]?.value||0);
@@ -515,7 +993,7 @@ function renderApp(ac,acp,ad2,ae,aos,ag,aen,wc,wcp) {
   document.getElementById('app-geo-list').innerHTML=gR.map(r=>{const p=gT>0?Math.round(r.sessions/gT*100):0;return`<div class="data-row"><span class="flag">${FLAGS[r.country]||'🌍'}</span><span class="row-name">${r.country}</span><div class="bar-bg"><div class="bar-fill" style="width:${p*2}%;max-width:100%;background:#2d7a3a;opacity:0.7;"></div></div><span class="row-val">${fmt(r.sessions)}</span></div>`;}).join('');
 }
 
-// ---- RENDER TRAFFIC ----
+// ---- TRAFFIC ----
 function renderTraffic(co,ch) {
   const cR=parseRows(co), t=cR.reduce((s,r)=>s+r.sessions,0);
   const uk=cR.filter(r=>r.country==='United Kingdom').reduce((s,r)=>s+r.sessions,0);
@@ -526,7 +1004,7 @@ function renderTraffic(co,ch) {
   document.getElementById('source-list').innerHTML=chR.map(r=>{const p=chT>0?Math.round(r.sessions/chT*100):0;return`<div class="data-row"><span class="row-name">${r.sessionDefaultChannelGroup}</span><span class="row-sub">${fmt(r.sessions)}</span><div class="bar-bg" style="max-width:100px;"><div class="bar-fill" style="width:${p*2}%;max-width:100%;background:#1a6ef5;opacity:0.7;"></div></div><span class="row-val" style="min-width:32px;">${p}%</span></div>`;}).join('');
 }
 
-// ---- RENDER SEO ----
+// ---- SEO ----
 function renderSEO(gc,gcp,gd,gq,gqp,gpa) {
   const cc=gc.rows?.[0]?.clicks||0, pc=gcp.rows?.[0]?.clicks||1;
   const ci=gc.rows?.[0]?.impressions||0, pi=gcp.rows?.[0]?.impressions||1;
@@ -548,7 +1026,6 @@ function buildTrendsCountryFilter() {
   document.getElementById('trends-country-filter').innerHTML=TREND_COUNTRIES.map(c=>`<button class="country-btn${c.code===trendsCountry?' active':''}" onclick="setTrendsCountry('${c.code}')">${c.label}</button>`).join('');
 }
 function setTrendsCountry(code) { trendsCountry=code; buildTrendsCountryFilter(); loadTrends(); }
-
 function loadTrends() {
   const months=13, labels=[], now=new Date();
   for(let i=months-1;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);labels.push(d.toLocaleDateString('en-GB',{month:'short',year:'2-digit'}));}
@@ -566,21 +1043,20 @@ function loadTrends() {
   const li=labels.length-1;
   document.getElementById('trends-summary').innerHTML=st.map((t,i)=>{const v=dd[t][li],pv=dd[t][li-1]||v;const tr=v>pv?'▲':v<pv?'▼':'—';return`<div class="data-row"><div style="width:10px;height:10px;border-radius:2px;background:${TREND_COLORS[i]};flex-shrink:0;"></div><span class="row-name">Property for sale in ${t}</span><span class="${v>pv?'up':v<pv?'down':''}" style="font-size:12px;min-width:20px;">${tr}</span><div class="bar-bg" style="max-width:120px;"><div class="bar-fill" style="width:${v}%;background:${TREND_COLORS[i]};opacity:0.7;"></div></div><span class="row-val">${v}/100</span></div>`;}).join('');
 }
-
 function toggleTerm(idx) {
   if(activeTerms.has(idx)){if(activeTerms.size>1)activeTerms.delete(idx);}else activeTerms.add(idx);
   document.querySelectorAll('[id^="legend-"]').forEach(el=>{const i=parseInt(el.id.split('-')[1]);el.className='trends-legend-item'+(activeTerms.has(i)?'':' inactive');});
   if(charts['trends-chart']){charts['trends-chart'].data.datasets.forEach((ds,i)=>{ds.hidden=!activeTerms.has(i);});charts['trends-chart'].update();}
 }
 
-// ---- RENDER EVENTS ----
+// ---- EVENTS ----
 function renderEvents(ev,evp) {
   const eR=parseRows(ev), pm={};
   parseRows(evp).forEach(r=>pm[r.eventName]=r.eventCount);
   document.getElementById('events-list').innerHTML=eR.map(r=>{const p=pm[r.eventName]||0,z=r.eventCount===0,dw=p>0&&r.eventCount<p*0.6;const dc2=z?'dot-red':dw?'dot-amber':'dot-green';const dl=p>0?((r.eventCount/p-1)*100).toFixed(0)+'%':'new';const st=r.eventName==='generate_lead'?' ★':'';return`<div class="data-row"><div class="dot ${dc2}"></div><span class="row-name mono">${r.eventName}${st}</span><span class="row-val">${fmt(r.eventCount)}</span><span class="row-sub ${dl!=='new'?(r.eventCount>=(p||0)?'up':'down'):''}" style="min-width:50px;">${dl!=='new'?(r.eventCount>=p?'+':'')+dl:dl}</span><span class="row-sub">prev: ${fmt(p)}</span></div>`;}).join('');
 }
 
-// ---- RENDER GEO ----
+// ---- GEO ----
 function renderGeo(co,cop) {
   const cR=parseRows(co), pm={};
   parseRows(cop).forEach(r=>pm[r.country]=r.sessions);
